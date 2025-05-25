@@ -41,7 +41,7 @@ struct AlarmCard: View {
 
             // 루틴 표시 영역
             if isOn {
-                // ✅ 전체 루틴 출력
+                // 전체 루틴 출력
                 ForEach(routines.indices, id: \.self) { i in
                     HStack(alignment: .top, spacing: 6) {
                         Text(routines[i].title)
@@ -57,7 +57,7 @@ struct AlarmCard: View {
                     }
                 }
             } else {
-                // ✅ 꺼졌을 땐 첫 루틴 + "+N" 요약
+                // 꺼졌을 땐 첫 루틴 + "+N" 요약
                 if let first = routines.first {
                     HStack(alignment: .top, spacing: 6) {
                         Text(first.title)
@@ -77,7 +77,7 @@ struct AlarmCard: View {
                 }
             }
 
-            // 더보기 버튼 (...)
+            // 더보기 버튼
             HStack {
                 Spacer()
                 Button(action: onMoreTapped) {
