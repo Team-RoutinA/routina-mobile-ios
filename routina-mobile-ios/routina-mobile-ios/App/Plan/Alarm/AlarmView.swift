@@ -23,7 +23,7 @@ struct AlarmView: View {
                 // 알람 남은 시간 텍스트
                 HStack {
                     Text(nextAlarmText)
-                        .font(.routina(.body_sb16))
+                        .font(.routina(.h2))
                         .foregroundColor(.black)
                     Spacer()
                 }
