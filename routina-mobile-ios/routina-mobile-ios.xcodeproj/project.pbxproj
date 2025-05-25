@@ -11,6 +11,19 @@
 		65C759CD2DE3093600D80394 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 65C759CC2DE3093600D80394 /* Moya */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		37352D492DE3107F00EFFD7F /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		65BF13172DE2D8BD00422691 /* routina-mobile-ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "routina-mobile-ios.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -83,6 +96,7 @@
 				65BF13132DE2D8BD00422691 /* Sources */,
 				65BF13142DE2D8BD00422691 /* Frameworks */,
 				65BF13152DE2D8BD00422691 /* Resources */,
+				37352D492DE3107F00EFFD7F /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -94,7 +108,6 @@
 			name = "routina-mobile-ios";
 			packageProductDependencies = (
 				37B5E0722DE2F71A0043E23B /* Alamofire */,
-				37B5E0742DE2F71A0043E23B /* AlamofireDynamic */,
 				65C759CC2DE3093600D80394 /* Moya */,
 			);
 			productName = "routina-mobile-ios";
@@ -286,6 +299,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SS8W2NCSL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "routina-mobile-ios/Info.plist";
@@ -294,6 +308,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -314,6 +329,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 5SS8W2NCSL;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "routina-mobile-ios/Info.plist";
@@ -322,6 +338,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -382,11 +399,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		37B5E0742DE2F71A0043E23B /* AlamofireDynamic */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
-			productName = AlamofireDynamic;
 		};
 		65C759CC2DE3093600D80394 /* Moya */ = {
 			isa = XCSwiftPackageProductDependency;

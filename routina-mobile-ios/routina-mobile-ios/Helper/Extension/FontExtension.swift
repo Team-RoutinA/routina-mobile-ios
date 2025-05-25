@@ -22,7 +22,7 @@ extension Font {
         }
     }
     
-    enum HaruchiStyle {
+    enum RoutinaStyle {
         case h1, h2, h3
         case body_sb16, body_r16, body_m16, body_m14
         case button12, button14, button16
@@ -49,9 +49,9 @@ extension Font {
             switch self {
             case .h1:
                 return .Bold
-            case .h2, .body_sb16:
+            case .h2, .body_sb16, .caption1:
                 return .SemiBold
-            case .body_m14, .body_m16, .caption1:
+            case .body_m14, .body_m16:
                 return .Medium
             case .h3, .body_r16, .button12, .button14, .button16, .caption2, .caption3:
                 return .Regular
@@ -59,18 +59,18 @@ extension Font {
         }
     }
     
-    static func haruchi(_ style: HaruchiStyle) -> Font {
+    static func routina(_ style: RoutinaStyle) -> Font {
         return Font.custom("Pretendard-\(style.family.rawValue)", size: style.size)
     }
     
-    static func haruchi(size: CGFloat, weight: Int) -> Font {
+    static func routina(size: CGFloat, weight: Int) -> Font {
         guard let family = FontFamily(weight: weight) else {
             fatalError("Invalid weight value. Must be between 100 and 900.")
         }
         return Font.custom("Pretendard-\(family.rawValue)", size: size)
     }
      
-    static func haruchi(size: CGFloat, family: FontFamily) -> Font {
+    static func routina(size: CGFloat, family: FontFamily) -> Font {
         return Font.custom("Pretendard-\(family.rawValue)", size: size)
     }
 }
