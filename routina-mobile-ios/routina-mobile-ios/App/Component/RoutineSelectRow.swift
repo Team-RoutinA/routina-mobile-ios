@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct RoutineSelectRow: View {
-    let iconName: String // 아이콘 이미지 이름
-    let title: String  // 루틴 제목 (예: "영어단어 10개 외우기")
-    let subtitle: String? // 부가 설명 (예: "기상 후 30분")
-    let showChevron: Bool // > 화살표 표시 여부
-    let isPlaceholder: Bool // 회색 안내 문구인지 여부
-    let onTap: () -> Void  // 탭 시 실행되는 액션
+    let iconName: String
+    let title: String
+    let subtitle: String?
+    let showChevron: Bool
+    let isPlaceholder: Bool
+    let onTap: () -> Void
 
     var body: some View {
         Button(action: onTap) {
@@ -51,13 +51,11 @@ struct RoutineSelectRow: View {
                     }
                 }
             }
-            .padding(.horizontal, 24)
             .padding(.vertical, 6)
-            .background(Color.white)
-            //.cornerRadius(12)
         }
     }
 }
+
 
 #Preview {
     VStack(spacing: 16) {

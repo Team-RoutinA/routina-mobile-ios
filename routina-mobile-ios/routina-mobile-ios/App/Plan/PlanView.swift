@@ -7,7 +7,9 @@
 import SwiftUI
 
 struct PlanView: View {
-    @StateObject private var viewModel = AlarmViewModel()
+    @StateObject private var alarmViewModel = AlarmViewModel()
+    //@StateObject private var routineViewModel = RoutineViewModel()
+    
     @State private var selectedTab: String = "알람"
 
     var body: some View {
@@ -18,12 +20,9 @@ struct PlanView: View {
                 .zIndex(1)
 
             if selectedTab == "알람" {
-                AlarmView(viewModel: viewModel)
+                AlarmView(viewModel: alarmViewModel)
             } else {
-                ScrollView {
-                    Text("루틴 목록이 여기에 들어갑니다")
-                        .padding()
-                }
+                RoutineView()
             }
         }
         .background(Color.gray1)
