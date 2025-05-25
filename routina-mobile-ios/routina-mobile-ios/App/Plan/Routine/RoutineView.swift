@@ -24,9 +24,10 @@ struct RoutineView: View {
                 .padding(.top, 8)
 
                 // 루틴 생성 버튼
-                CreateAlarmButton(text: "＋ 루틴 생성하기") {
+                CreateRoutineButton(text: "루틴 생성하기") {
                     print("루틴 생성 버튼 눌림")
                 }
+                .padding(.horizontal, 24)
 
                 // 루틴 리스트 박스
                 VStack(spacing: 0) {
@@ -44,7 +45,7 @@ struct RoutineView: View {
                     }
                 }
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 20)
                 .background(Color.white)
                 .cornerRadius(20)
                 .padding(.horizontal, 24)
