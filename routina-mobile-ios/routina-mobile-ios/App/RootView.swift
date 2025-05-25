@@ -8,16 +8,47 @@
 import SwiftUI
 
 struct RootView: View {
+    
+    init() {
+        setupTabAppearance()
+    }
+    
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        TabView {
+            Tab("계획", image: "planTab") {
+                PlanView()
+            }
+            
+            Tab("홈", image: "doTab") {
+                DoView()
+            }
+            
+            Tab("내 기록", image: "seeTab") {
+                SeeView()
+            }
         }
-        .padding()
+    }
+    
+    private func setupTabAppearance() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = .white
+        
+        // 비선택 상태 색상
+        appearance.stackedLayoutAppearance.normal.iconColor = .gray5
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = [.foregroundColor: UIColor.gray5]
+        
+        // 선택 상태 색상
+        appearance.stackedLayoutAppearance.selected.iconColor = .gray9
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [.foregroundColor: UIColor.gray9]
+        
+        appearance.shadowColor = nil
+        
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
+
 
 #Preview {
     RootView()

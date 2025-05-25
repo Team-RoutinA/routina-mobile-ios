@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 37B5E0722DE2F71A0043E23B /* Alamofire */; };
-		37B5E0752DE2F71A0043E23B /* AlamofireDynamic in Frameworks */ = {isa = PBXBuildFile; productRef = 37B5E0742DE2F71A0043E23B /* AlamofireDynamic */; };
+		65C759CD2DE3093600D80394 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 65C759CC2DE3093600D80394 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,8 +41,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				65C759CD2DE3093600D80394 /* Moya in Frameworks */,
 				37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */,
-				37B5E0752DE2F71A0043E23B /* AlamofireDynamic in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -53,6 +53,7 @@
 			isa = PBXGroup;
 			children = (
 				65BF13192DE2D8BD00422691 /* routina-mobile-ios */,
+				65C759CB2DE3093600D80394 /* Frameworks */,
 				65BF13182DE2D8BD00422691 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -63,6 +64,13 @@
 				65BF13172DE2D8BD00422691 /* routina-mobile-ios.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		65C759CB2DE3093600D80394 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -87,6 +95,7 @@
 			packageProductDependencies = (
 				37B5E0722DE2F71A0043E23B /* Alamofire */,
 				37B5E0742DE2F71A0043E23B /* AlamofireDynamic */,
+				65C759CC2DE3093600D80394 /* Moya */,
 			);
 			productName = "routina-mobile-ios";
 			productReference = 65BF13172DE2D8BD00422691 /* routina-mobile-ios.app */;
@@ -378,6 +387,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = AlamofireDynamic;
+		};
+		65C759CC2DE3093600D80394 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
