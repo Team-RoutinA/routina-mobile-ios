@@ -31,10 +31,6 @@ struct RoutineView: View {
                         isPresentingCreateView = true
                     }
                     .padding(.horizontal, 24)
-                    .background(
-                        NavigationLink("", destination: CreateRoutineView(viewModel: viewModel), isActive: $isPresentingCreateView)
-                            .hidden()
-                    )
                     
                     // 루틴 리스트 박스
                     VStack(spacing: 0) {
@@ -61,6 +57,11 @@ struct RoutineView: View {
                 .padding(.top, 20)
             }
             .background(Color.gray1.ignoresSafeArea())
+        }
+        .fullScreenCover(isPresented: $isPresentingCreateView) {
+            NavigationStack {
+                CreateRoutineView(viewModel: viewModel)
+            }
         }
     }
 }
