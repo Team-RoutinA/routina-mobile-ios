@@ -13,6 +13,7 @@ struct CreateAlarmView: View {
     
     @State private var alarmTime: Date = Date()
     @State private var isShowingTimePicker: Bool = false
+    @State private var volumeFloat: Float = 0.5
     
     private var navigationTitle: String {
         "알람 생성하기"
@@ -27,6 +28,9 @@ struct CreateAlarmView: View {
                     
                     // 알람 시간
                     alarmTimeSection
+                    
+                    // 음량 설정
+                    volumeSection
                 }
             }
                 
@@ -68,6 +72,7 @@ struct CreateAlarmView: View {
                 .font(.routina(.body_m16))
                 .foregroundColor(.black)
                 .padding(.horizontal, 20)
+                .padding(.bottom, 10)
             
             Button(action: {
                 isShowingTimePicker = true
@@ -83,6 +88,7 @@ struct CreateAlarmView: View {
                 .background(Color.gray1)
                 .cornerRadius(12)
                 .padding(.horizontal, 20)
+                .padding(.bottom, 10)
             }
         }
         .sheet(isPresented: $isShowingTimePicker) {
@@ -122,6 +128,22 @@ struct CreateAlarmView: View {
         formatter.dateFormat = "a h:mm"
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: alarmTime)
+    }
+    
+    var volume: Double {
+        Double(volumeFloat)
+    }
+    
+    private var volumeSection: some View {
+        HStack(spacing: 130){
+            Text("음량")
+                .font(.routina(.body_m16))
+                .foregroundColor(.black)
+
+            CustomSlider(value: $volumeFloat)
+                    .frame(height: 30)
+        }
+        .padding(.horizontal, 20)
     }
 }
 

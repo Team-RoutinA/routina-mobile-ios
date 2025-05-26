@@ -7,12 +7,12 @@
 
 import Foundation
 
-struct AlarmItem {
+struct AlarmModel {
     var alarmTime: Date
-    //var timeText: String
     var weekdays: [String]
     var routines: [(title: String, type: String?)]
     var isOn: Bool
+    var volume: Double
     
     var timeText: String {
         let formatter = DateFormatter()

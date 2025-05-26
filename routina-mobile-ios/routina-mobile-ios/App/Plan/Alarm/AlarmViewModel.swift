@@ -8,8 +8,8 @@
 import SwiftUI
 
 class AlarmViewModel: ObservableObject {
-    @Published var alarms: [AlarmItem] = [
-        AlarmItem(
+    @Published var alarms: [AlarmModel] = [
+        AlarmModel(
             alarmTime: AlarmViewModel.makeDate(hour: 7, minute: 20),
             weekdays: ["월", "수", "금"],
             routines: [
@@ -19,15 +19,17 @@ class AlarmViewModel: ObservableObject {
                 ("아침 간식 준비 (바나나, 요거트)", "단순형"),
                 ("출근 복장 최종 점검", "단순형")
             ],
-            isOn: true
+            isOn: true,
+            volume: 0.3
         ),
-        AlarmItem(
+        AlarmModel(
             alarmTime: AlarmViewModel.makeDate(hour: 6, minute: 20),
             weekdays: ["화", "목"],
             routines: [
                 ("5분 동안 스트레칭", "시간형")
             ],
-            isOn: false
+            isOn: false,
+            volume: 0.7
         )
     ]
     
