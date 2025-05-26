@@ -10,6 +10,8 @@ import SwiftUI
 struct RoutineView: View {
     @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
     @State private var isPresentingCreateView = false
+    @State private var isPresentingEditView = false
+    @State private var selectedRoutineIndex: Int?
 
     var body: some View {
         NavigationStack {
@@ -27,7 +29,6 @@ struct RoutineView: View {
                     
                     // 루틴 생성 버튼
                     CreateRoutineButton(text: "루틴 생성하기") {
-                        print("루틴 생성 버튼 눌림")
                         isPresentingCreateView = true
                     }
                     .padding(.horizontal, 24)
@@ -42,7 +43,10 @@ struct RoutineView: View {
                                 showChevron: true,
                                 isPlaceholder: false,
                                 onTap: {
-                                    print("루틴 \(i) 선택됨")
+                                    print("루틴 \(i) 선택됨: \(viewModel.routines[i].title)")
+                                    print("총 루틴 개수: \(viewModel.routines.count)")
+                                    selectedRoutineIndex = i
+                                    isPresentingEditView = true
                                 }
                             )
                         }
@@ -61,6 +65,25 @@ struct RoutineView: View {
         .fullScreenCover(isPresented: $isPresentingCreateView) {
             NavigationStack {
                 CreateRoutineView(viewModel: viewModel)
+            }
+        }
+        .fullScreenCover(isPresented: $isPresentingEditView, onDismiss: {
+            selectedRoutineIndex = nil
+        }) {
+            if let index = selectedRoutineIndex, index < viewModel.routines.count {
+                NavigationStack {
+                    CreateRoutineView(
+                        viewModel: viewModel,
+                        editingRoutine: viewModel.routines[index],
+                        editingIndex: index
+                    )
+                }
+            } else {
+                // 안전장치: 인덱스가 유효하지 않을 경우 빈 뷰 대신 dismiss
+                Color.clear
+                    .onAppear {
+                        isPresentingEditView = false
+                    }
             }
         }
     }
