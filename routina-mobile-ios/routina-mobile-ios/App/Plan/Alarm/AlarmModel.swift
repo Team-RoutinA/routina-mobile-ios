@@ -13,6 +13,7 @@ struct AlarmModel {
     var routines: [(title: String, type: String?)]
     var isOn: Bool
     var volume: Double
+    var isVibrationOn: Bool
     
     var timeText: String {
         let formatter = DateFormatter()

@@ -14,6 +14,7 @@ struct CreateAlarmView: View {
     @State private var alarmTime: Date = Date()
     @State private var isShowingTimePicker: Bool = false
     @State private var volumeFloat: Float = 0.5
+    @State private var isVibrationOn: Bool = true
     
     private var navigationTitle: String {
         "알람 생성하기"
@@ -31,6 +32,9 @@ struct CreateAlarmView: View {
                     
                     // 음량 설정
                     volumeSection
+                    
+                    // 진동 여부
+                    vibrationSection
                 }
             }
                 
@@ -142,6 +146,20 @@ struct CreateAlarmView: View {
 
             CustomSlider(value: $volumeFloat)
                     .frame(height: 30)
+        }
+        .padding(.horizontal, 20)
+    }
+    
+    private var vibrationSection: some View {
+        HStack {
+            Text("진동")
+                .font(.routina(.body_m16))
+                .foregroundColor(.black)
+            
+            Spacer()
+
+            Toggle("", isOn: $isVibrationOn)
+                .toggleStyle(CustomToggle())
         }
         .padding(.horizontal, 20)
     }

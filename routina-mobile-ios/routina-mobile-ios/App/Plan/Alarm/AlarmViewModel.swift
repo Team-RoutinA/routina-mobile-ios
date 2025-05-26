@@ -20,7 +20,8 @@ class AlarmViewModel: ObservableObject {
                 ("출근 복장 최종 점검", "단순형")
             ],
             isOn: true,
-            volume: 0.3
+            volume: 0.3,
+            isVibrationOn: true
         ),
         AlarmModel(
             alarmTime: AlarmViewModel.makeDate(hour: 6, minute: 20),
@@ -29,7 +30,8 @@ class AlarmViewModel: ObservableObject {
                 ("5분 동안 스트레칭", "시간형")
             ],
             isOn: false,
-            volume: 0.7
+            volume: 0.7,
+            isVibrationOn: false
         )
     ]
     
