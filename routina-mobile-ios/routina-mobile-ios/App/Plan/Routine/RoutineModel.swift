@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct RoutineItem {
-    let icon: String
+struct RoutineModel: Identifiable {
+    let id = UUID()
     let title: String
+    let icon: String
 }
