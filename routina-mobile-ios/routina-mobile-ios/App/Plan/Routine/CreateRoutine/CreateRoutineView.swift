@@ -92,8 +92,6 @@ struct CreateRoutineView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                        Text("뒤로")
-                            .font(.system(size: 16, weight: .medium))
                     }
                     .foregroundColor(.black)
                 }
@@ -130,6 +128,7 @@ struct CreateRoutineView: View {
                 }
             }
         )
+        .padding(12)
     }
     
     // MARK: - Setup Methods
