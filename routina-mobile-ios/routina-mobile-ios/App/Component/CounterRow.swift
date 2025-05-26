@@ -59,8 +59,3 @@ struct CounterRow: View {
         }
     }
 }
-
-#Preview {
-    RoutineOptionView()
-        .padding()
-}
