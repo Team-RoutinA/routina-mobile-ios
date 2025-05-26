@@ -10,7 +10,11 @@ import SwiftUI
 struct CreateRoutineView: View {
     @ObservedObject var viewModel: RoutineViewModel
     @Environment(\.dismiss) var dismiss
-
+    
+    // 수정 모드를 위한 프로퍼티
+    let editingRoutine: RoutineModel?
+    let editingIndex: Int?
+    
     @State private var routineName: String = ""
     @State private var selectedType: RoutineType = .numeric
     @State private var goalCount: Int = 0
@@ -19,6 +23,34 @@ struct CreateRoutineView: View {
     
     @State private var showSnackBar: Bool = false
     @State private var isSuccessSnackBar: Bool = true
+    @State private var hasInitialized = false
+    @State private var refreshTrigger = false
+    
+    // 생성 모드용 이니셜라이저
+    init(viewModel: RoutineViewModel) {
+        self.viewModel = viewModel
+        self.editingRoutine = nil
+        self.editingIndex = nil
+    }
+    
+    // 수정 모드용 이니셜라이저
+    init(viewModel: RoutineViewModel, editingRoutine: RoutineModel, editingIndex: Int) {
+        self.viewModel = viewModel
+        self.editingRoutine = editingRoutine
+        self.editingIndex = editingIndex
+    }
+    
+    private var isEditMode: Bool {
+        editingRoutine != nil
+    }
+    
+    private var navigationTitle: String {
+        isEditMode ? "루틴 수정하기" : "루틴 생성하기"
+    }
+    
+    private var buttonTitle: String {
+        isEditMode ? "루틴 수정" : "루틴 생성"
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -45,11 +77,11 @@ struct CreateRoutineView: View {
             }
             .background(Color.white)
             
-            // 루틴 생성 버튼
-            createButtonSection
+            // 루틴 생성/수정 버튼
+            actionButtonSection
         }
         .background(Color.white)
-        .navigationTitle("루틴 생성하기")
+        .navigationTitle(navigationTitle)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
         .toolbar {
@@ -60,10 +92,25 @@ struct CreateRoutineView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
+                        Text("뒤로")
+                            .font(.system(size: 16, weight: .medium))
                     }
                     .foregroundColor(.black)
                 }
             }
+        }
+        .onAppear {
+            if let routine = editingRoutine {
+                // 강제로 값 설정
+                DispatchQueue.main.async {
+                    self.routineName = routine.title
+                    self.selectedType = routine.routineType ?? self.getRoutineType(from: routine.icon)
+                    self.goalCount = routine.goalCount ?? 0
+                    self.limitMinutes = routine.limitMinutes ?? 0
+                    self.successStandard = routine.successStandard ?? ""
+                }
+            }
+            setupInitialValues()
         }
         .overlay(
             Group {
@@ -71,7 +118,9 @@ struct CreateRoutineView: View {
                     VStack {
                         Spacer()
                         SnackBar(
-                            text: isSuccessSnackBar ? "루틴이 성공적으로 생성되었습니다." : "루틴 생성에 실패하였습니다.",
+                            text: isSuccessSnackBar ?
+                                (isEditMode ? "루틴이 성공적으로 수정되었습니다." : "루틴이 성공적으로 생성되었습니다.") :
+                                (isEditMode ? "루틴 수정에 실패하였습니다." : "루틴 생성에 실패하였습니다."),
                             isSuccess: isSuccessSnackBar
                         )
                         .padding(.bottom, 20)
@@ -83,9 +132,48 @@ struct CreateRoutineView: View {
         )
     }
     
+    // MARK: - Setup Methods
+    
+    private func setupInitialValues() {
+        if let routine = editingRoutine, !hasInitialized {
+            self.routineName = routine.title // 즉시 값 설정
+            self.selectedType = routine.routineType ?? self.getRoutineType(from: routine.icon) // 저장된 타입이 있으면 사용, 없으면 아이콘으로 추론
+            self.goalCount = routine.goalCount ?? 0
+            self.limitMinutes = routine.limitMinutes ?? 0
+            self.successStandard = routine.successStandard ?? ""
+            self.hasInitialized = true
+            
+            // UI 강제 새로고침
+            DispatchQueue.main.async {
+                self.refreshTrigger.toggle()
+            }
+        }
+    }
+    
+    private func getRoutineType(from iconName: String) -> RoutineType {
+        print("아이콘 이름으로 타입 추론: '\(iconName)'")
+        
+        switch iconName {
+        case "numeric":
+            print("-> numeric 타입으로 추론")
+            return .numeric
+        case "time":
+            print("-> time 타입으로 추론")
+            return .time
+        case "simple":
+            print("-> simple 타입으로 추론")
+            return .simple
+        case "complex":
+            print("-> complex 타입으로 추론")
+            return .complex
+        default:
+            print("-> 알 수 없는 아이콘, numeric으로 기본 설정")
+            return .numeric
+        }
+    }
+    
     // MARK: - View Components
     
-    // 제목
     private var titleSection: some View {
         Text("루틴에 필요한 정보를 알려주세요")
             .font(.routina(.h2))
@@ -95,7 +183,6 @@ struct CreateRoutineView: View {
             .padding(.top, 24)
     }
     
-    // 루틴 제목
     private var routineNameSection: some View {
         TextField("루틴 제목을 입력해 주세요", text: $routineName)
             .padding()
@@ -114,7 +201,6 @@ struct CreateRoutineView: View {
             .padding(.horizontal, 20)
     }
     
-    // 타입 선택 박스
     private var typeSelectionSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack(spacing: 12) {
@@ -123,7 +209,7 @@ struct CreateRoutineView: View {
                         selectedType = type
                     } label: {
                         HStack(spacing: 6) {
-                            Image(type.tagIconName)
+                            Image(type.tagImageName)
                                 .resizable()
                                 .frame(width: 22, height: 22)
                             
@@ -144,7 +230,6 @@ struct CreateRoutineView: View {
         .padding(.top, 8)
     }
     
-    // 타입 별 설명
     private var typeDescriptionSection: some View {
         Text(selectedType.description)
             .font(.routina(.caption2))
@@ -153,7 +238,6 @@ struct CreateRoutineView: View {
             .padding(.horizontal, 20)
     }
     
-    // 타입에 따라 조건별 컴포넌트 표시
     private var counterSection: some View {
         Group {
             if selectedType == .numeric {
@@ -171,14 +255,17 @@ struct CreateRoutineView: View {
                 CounterRow(title: "마감 기한", value: $limitMinutes, unit: "분")
             }
         }
+        .id(refreshTrigger) // 강제 새로고침을 위한 id
         .onChange(of: selectedType) {
-            goalCount = 0
-            limitMinutes = 0
+            // 수정 모드에서 초기 로딩이 완료된 후에만 초기화
+            if !isEditMode || hasInitialized {
+                goalCount = 0
+                limitMinutes = 0
+            }
         }
         .padding(.horizontal, 20)
     }
     
-    // 성공 기준
     private var successCriteriaSection: some View {
         VStack(spacing: 12) {
             Text("성공 기준")
@@ -207,15 +294,32 @@ struct CreateRoutineView: View {
         }
     }
     
-    // 루틴 생성 버튼
-    private var createButtonSection: some View {
-        Button("루틴 생성") {
+    private var actionButtonSection: some View {
+        Button(buttonTitle) {
             if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
                 isSuccessSnackBar = false
                 showSnackBar = true
             } else {
-                let newRoutine = RoutineModel(title: routineName, icon: selectedType.tagIconName)
-                viewModel.addRoutine(newRoutine)
+                let routine = RoutineModel(
+                    title: routineName,
+                    icon: selectedType.tagImageName,
+                    routineType: selectedType,
+                    goalCount: goalCount > 0 ? goalCount : nil,
+                    limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
+                    successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
+                )
+                if isEditMode {
+                    // 수정 모드
+                    if let index = editingIndex {
+                        print("수정 모드: 인덱스 \(index)")
+                        viewModel.updateRoutine(at: index, with: routine)
+                    }
+                } else {
+                    // 생성 모드
+                    print("생성 모드")
+                    viewModel.addRoutine(routine)
+                }
+                
                 isSuccessSnackBar = true
                 showSnackBar = true
                 
