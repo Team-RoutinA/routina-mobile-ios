@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AlarmView: View {
     @ObservedObject var viewModel: AlarmViewModel
+    @State private var isPresentingCreateView = false
 
     // 임시로 가장 가까운 알람 시간 기준 남은 시간 텍스트 계산
     var nextAlarmText: String {
@@ -18,47 +19,51 @@ struct AlarmView: View {
     }
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 12) {
-                // 알람 남은 시간 텍스트
-                HStack {
-                    Text(nextAlarmText)
-                        .font(.routina(.h2))
-                        .foregroundColor(.black)
-                    Spacer()
-                }
-                .padding(.horizontal, 50)
-                .padding(.bottom, 8)
-
-                // 알람 생성하기 버튼
-                CreateAlarmButton(text: "+ 알람 생성하기") {
-                    print("알람 생성 버튼 눌림")
+        NavigationStack{
+            ScrollView {
+                VStack(spacing: 12) {
+                    // 알람 남은 시간 텍스트
+                    HStack {
+                        Text(nextAlarmText)
+                            .font(.routina(.h2))
+                            .foregroundColor(.black)
+                        Spacer()
+                    }
+                    .padding(.horizontal, 50)
+                    .padding(.bottom, 8)
+                    
+                    // 알람 생성하기 버튼
+                    CreateAlarmButton(text: "+ 알람 생성하기") {
+                        isPresentingCreateView = true
+                    }
+                    .padding(.horizontal, 24)
+                    
+                    // 알람 카드 리스트
+                    ForEach(viewModel.alarms.indices, id: \.self) { i in
+                        AlarmCard(
+                            timeText: viewModel.alarms[i].timeText,
+                            weekdays: viewModel.alarms[i].weekdays,
+                            routines: viewModel.alarms[i].routines,
+                            isOn: $viewModel.alarms[i].isOn,
+                            onMoreTapped: {
+                                print("더보기 눌림: \(viewModel.alarms[i].timeText)")
+                            }
+                        )
+                        .padding(.horizontal, 48)
+                    }
                 }
                 .padding(.horizontal, 24)
-
-                // 알람 카드 리스트
-                ForEach(viewModel.alarms.indices, id: \.self) { i in
-                    AlarmCard(
-                        timeText: viewModel.alarms[i].timeText,
-                        weekdays: viewModel.alarms[i].weekdays,
-                        routines: viewModel.alarms[i].routines,
-                        isOn: $viewModel.alarms[i].isOn,
-                        onMoreTapped: {
-                            print("더보기 눌림: \(viewModel.alarms[i].timeText)")
-                        }
-                    )
-                    .padding(.horizontal, 48)
-                }
+                .padding(.top, 18)
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 18)
+            .background(Color.gray1.ignoresSafeArea())
+        }
+        .fullScreenCover(isPresented: $isPresentingCreateView) {
+            NavigationStack {
+                CreateAlarmView(viewModel: viewModel)
+            }
         }
     }
 }
-
-//#Preview {
-//    AlarmView(viewModel: AlarmViewModel())
-//}
 
 #Preview {
     PlanView()
