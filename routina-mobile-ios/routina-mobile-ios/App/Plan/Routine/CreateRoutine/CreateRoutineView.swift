@@ -328,10 +328,23 @@ struct CreateRoutineView: View {
         .padding(.top, 10)
     }
     
+    private var isValidInput: Bool {
+        let trimmedName = routineName.trimmingCharacters(in: .whitespaces)
+        
+        guard !trimmedName.isEmpty else { return false }
+        
+        switch selectedType {
+        case .numeric, .time:
+            return goalCount > 0 && limitMinutes > 0
+        case .simple, .complex:
+            return limitMinutes > 0
+        }
+    }
+    
     private var actionButtonSection: some View {
         MainButton(
             text: buttonTitle,
-            enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
+            enable: isValidInput,
             action: {
                 if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
                     isSuccessSnackBar = false
