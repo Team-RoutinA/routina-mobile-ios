@@ -26,6 +26,8 @@ struct CreateRoutineView: View {
     @State private var hasInitialized = false
     @State private var refreshTrigger = false
     
+    @State private var isShowingDeleteAlert = false
+    
     // 생성 모드용 이니셜라이저
     init(viewModel: RoutineViewModel) {
         self.viewModel = viewModel
@@ -130,6 +132,16 @@ struct CreateRoutineView: View {
                     }
                 }
             )
+            .alert("정말 삭제하시겠어요?", isPresented: $isShowingDeleteAlert) {
+                Button("삭제", role: .destructive) {
+                    if let index = editingIndex {
+                        viewModel.deleteRoutine(at: index)
+                        dismiss()
+                    }
+                }
+                Button("취소", role: .cancel) { }
+            }
+
             .padding(12)
         }
     }
@@ -300,10 +312,7 @@ struct CreateRoutineView: View {
         VStack{
             if isEditMode {
                 Button(action: {
-                    if let index = editingIndex {
-                        viewModel.deleteRoutine(at: index)
-                        dismiss()
-                    }
+                    isShowingDeleteAlert = true
                 }) {
                     Text("루틴 삭제하기")
                         .foregroundColor(.red)
