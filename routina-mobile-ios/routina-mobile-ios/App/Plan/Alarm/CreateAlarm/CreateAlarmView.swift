@@ -15,6 +15,8 @@ struct CreateAlarmView: View {
     @State private var isShowingTimePicker: Bool = false
     @State private var volumeFloat: Float = 0.5
     @State private var isVibrationOn: Bool = true
+    @State private var selectedWeekdays: Set<String> = []
+    private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
     
     private var navigationTitle: String {
         "알람 생성하기"
@@ -35,6 +37,9 @@ struct CreateAlarmView: View {
                     
                     // 진동 여부
                     vibrationSection
+                    
+                    // 반복 요일
+                    weekdaySelectionSection
                 }
             }
                 
@@ -73,7 +78,7 @@ struct CreateAlarmView: View {
     private var alarmTimeSection: some View {
         VStack(alignment: .leading, spacing: 8) {
             Text("알람 시간")
-                .font(.routina(.body_m16))
+                .font(.routina(.body_sb16))
                 .foregroundColor(.black)
                 .padding(.horizontal, 20)
                 .padding(.bottom, 10)
@@ -153,7 +158,7 @@ struct CreateAlarmView: View {
     private var vibrationSection: some View {
         HStack {
             Text("진동")
-                .font(.routina(.body_m16))
+                .font(.routina(.body_sb16))
                 .foregroundColor(.black)
             
             Spacer()
@@ -162,6 +167,40 @@ struct CreateAlarmView: View {
                 .toggleStyle(CustomToggle())
         }
         .padding(.horizontal, 20)
+    }
+    
+    private func toggleDay(_ day: String) {
+        if selectedWeekdays.contains(day) {
+            selectedWeekdays.remove(day)
+        } else {
+            selectedWeekdays.insert(day)
+        }
+    }
+    
+    private var weekdaySelectionSection: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text("반복 요일")
+                .font(.routina(.body_sb16))
+                .foregroundColor(.black)
+                .padding(.horizontal, 20)
+
+            HStack(spacing: 8) {
+                ForEach(weekdays, id: \.self) { day in
+                    Button(action: {
+                        toggleDay(day)
+                    }) {
+                        Text(day)
+                            .font(.routina(.body_sb16))
+                            .frame(width: 36, height: 36)
+                            .background(selectedWeekdays.contains(day) ? Color.sub3Blue : Color.gray1)
+                            .foregroundColor(selectedWeekdays.contains(day) ? .mainBlue : .gray3)
+                            .clipShape(Circle())
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.horizontal, 20)
+        }
     }
 }
 
