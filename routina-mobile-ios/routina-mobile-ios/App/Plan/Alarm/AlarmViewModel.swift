@@ -11,7 +11,7 @@ class AlarmViewModel: ObservableObject {
     @Published var alarms: [AlarmModel] = [
         AlarmModel(
             alarmTime: AlarmViewModel.makeDate(hour: 7, minute: 20),
-            weekdays: ["월", "수", "금"],
+            weekdays: Set(["월", "수", "금"]),
             routines: [
                 ("물 한 잔 마시기", "단순형"),
                 ("스트레칭 5분", "시간형"),
@@ -25,7 +25,7 @@ class AlarmViewModel: ObservableObject {
         ),
         AlarmModel(
             alarmTime: AlarmViewModel.makeDate(hour: 6, minute: 20),
-            weekdays: ["화", "목"],
+            weekdays: Set(["화", "목"]),
             routines: [
                 ("5분 동안 스트레칭", "시간형")
             ],

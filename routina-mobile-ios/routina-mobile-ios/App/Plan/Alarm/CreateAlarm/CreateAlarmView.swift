@@ -18,8 +18,14 @@ struct CreateAlarmView: View {
     @State private var selectedWeekdays: Set<String> = []
     private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
     
+    @State private var isPresentingSelectRoutineView = false
+    
     private var navigationTitle: String {
         "알람 생성하기"
+    }
+    
+    private var buttonTitle: String {
+        "다음으로"
     }
     
     var body: some View {
@@ -42,7 +48,10 @@ struct CreateAlarmView: View {
                     weekdaySelectionSection
                 }
             }
-                
+            .background(Color.white)
+            
+            // 다음으로 버튼
+            actionButtonSection
         }
         .background(Color.white)
         .navigationTitle(navigationTitle)
@@ -59,6 +68,36 @@ struct CreateAlarmView: View {
                     }
                     .foregroundColor(.black)
                 }
+            }
+        }
+        .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
+            NavigationStack {
+                SelectRoutineView(
+                    viewModel: viewModel,
+                    alarmModel: AlarmModel(
+                        alarmTime: alarmTime,
+                        weekdays: selectedWeekdays,  // Set<String> 그대로 전달
+                        routines: [], // 나중에 SelectRoutineView에서 선택
+                        isOn: true,
+                        volume: Double(volumeFloat),
+                        isVibrationOn: isVibrationOn
+                    )
+                )
+            }
+        }
+        .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
+            NavigationStack {
+                SelectRoutineView(
+                    viewModel: viewModel,
+                    alarmModel: AlarmModel(
+                        alarmTime: alarmTime,
+                        weekdays: selectedWeekdays,
+                        routines: [],
+                        isOn: true,
+                        volume: Double(volumeFloat),
+                        isVibrationOn: isVibrationOn
+                    )
+                )
             }
         }
         .padding(12)
@@ -201,6 +240,16 @@ struct CreateAlarmView: View {
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
         }
+    }
+    
+    private var actionButtonSection: some View {
+        MainButton(
+            text: buttonTitle,
+            action: {
+                isPresentingSelectRoutineView = true
+            }
+        )
+        .padding(.bottom, 20)
     }
 }
 

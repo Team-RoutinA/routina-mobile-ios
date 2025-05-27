@@ -42,7 +42,7 @@ struct AlarmView: View {
                     ForEach(viewModel.alarms.indices, id: \.self) { i in
                         AlarmCard(
                             timeText: viewModel.alarms[i].timeText,
-                            weekdays: viewModel.alarms[i].weekdays,
+                            weekdays: Array(viewModel.alarms[i].weekdays),
                             routines: viewModel.alarms[i].routines,
                             isOn: $viewModel.alarms[i].isOn,
                             onMoreTapped: {
@@ -62,9 +62,14 @@ struct AlarmView: View {
                 CreateAlarmView(viewModel: viewModel)
             }
         }
+        .onReceive(NotificationCenter.default.publisher(for: .alarmCreated)) { _ in
+            // 알람이 생성되었다는 신호를 받으면 CreateAlarmView 닫기
+            isPresentingCreateView = false
+            print("알람 생성 완료 - CreateAlarmView 닫힘")
+        }
     }
 }
 
 #Preview {
-    PlanView()
+    AlarmView(viewModel: AlarmViewModel())
 }
