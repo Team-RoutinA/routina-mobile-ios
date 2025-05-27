@@ -39,14 +39,14 @@ struct AlarmView: View {
                     .padding(.horizontal, 24)
                     
                     // 알람 카드 리스트
-                    ForEach(viewModel.alarms.indices, id: \.self) { i in
+                    ForEach(Array(viewModel.alarms.enumerated()), id: \.0) { (index, alarm) in
                         AlarmCard(
-                            timeText: viewModel.alarms[i].timeText,
-                            weekdays: Array(viewModel.alarms[i].weekdays),
-                            routines: viewModel.alarms[i].routines,
-                            isOn: $viewModel.alarms[i].isOn,
-                            onMoreTapped: {
-                                print("더보기 눌림: \(viewModel.alarms[i].timeText)")
+                            timeText: alarm.timeText,
+                            weekdays: Array(alarm.weekdays),
+                            routines: alarm.routines,
+                            isOn: $viewModel.alarms[index].isOn,
+                            onDelete: {
+                                viewModel.alarms.remove(at: index)
                             }
                         )
                         .padding(.horizontal, 48)
