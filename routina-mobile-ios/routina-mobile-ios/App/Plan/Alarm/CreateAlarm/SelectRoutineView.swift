@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct SelectRoutineView: View {
-    @ObservedObject var viewModel: AlarmViewModel
-    @ObservedObject var routineViewModel: RoutineViewModel = RoutineViewModel()
+    @ObservedObject var alarmViewModel: AlarmViewModel
+    @ObservedObject var routineViewModel: RoutineViewModel
     @Environment(\.dismiss) var dismiss
     
     let alarmModel: AlarmModel
@@ -266,7 +266,7 @@ struct SelectRoutineView: View {
                     volume: alarmModel.volume,
                     isVibrationOn: alarmModel.isVibrationOn
                 )
-                viewModel.alarms.append(newAlarm)
+                alarmViewModel.alarms.append(newAlarm)
                 
                 SnackBarPresenter.show(text: "알람이 성공적으로 생성되었습니다.", isSuccess: true)
 
@@ -283,7 +283,8 @@ struct SelectRoutineView: View {
 #Preview {
     NavigationStack {
         SelectRoutineView(
-            viewModel: AlarmViewModel(),
+            alarmViewModel: AlarmViewModel(),
+            routineViewModel: RoutineViewModel(),
             alarmModel: AlarmModel(
                 alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
                 weekdays: Set(["월", "화", "수"]),

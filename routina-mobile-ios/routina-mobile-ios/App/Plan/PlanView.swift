@@ -8,7 +8,7 @@ import SwiftUI
 
 struct PlanView: View {
     @StateObject private var alarmViewModel = AlarmViewModel()
-    //@StateObject private var routineViewModel = RoutineViewModel()
+    @StateObject private var routineViewModel = RoutineViewModel()
     
     @State private var selectedTab: String = "알람"
 
@@ -20,9 +20,9 @@ struct PlanView: View {
                 .zIndex(1)
 
             if selectedTab == "알람" {
-                AlarmView(viewModel: alarmViewModel)
+                AlarmView(alarmViewModel: alarmViewModel, routineViewModel: routineViewModel)
             } else {
-                RoutineView()
+                RoutineView(viewModel: routineViewModel)
             }
         }
         .background(Color.gray1)

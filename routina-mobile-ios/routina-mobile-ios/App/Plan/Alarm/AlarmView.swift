@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct AlarmView: View {
-    @ObservedObject var viewModel: AlarmViewModel
+    @ObservedObject var alarmViewModel: AlarmViewModel
+    @ObservedObject var routineViewModel: RoutineViewModel
     @State private var isPresentingCreateView = false
 
     // 임시로 가장 가까운 알람 시간 기준 남은 시간 텍스트 계산
@@ -39,14 +40,14 @@ struct AlarmView: View {
                     .padding(.horizontal, 24)
                     
                     // 알람 카드 리스트
-                    ForEach(Array(viewModel.alarms.enumerated()), id: \.0) { (index, alarm) in
+                    ForEach(Array(alarmViewModel.alarms.enumerated()), id: \.0) { (index, alarm) in
                         AlarmCard(
                             timeText: alarm.timeText,
                             weekdays: Array(alarm.weekdays),
                             routines: alarm.routines,
-                            isOn: $viewModel.alarms[index].isOn,
+                            isOn: $alarmViewModel.alarms[index].isOn,
                             onDelete: {
-                                viewModel.alarms.remove(at: index)
+                                alarmViewModel.alarms.remove(at: index)
                             }
                         )
                         .padding(.horizontal, 48)
@@ -59,7 +60,7 @@ struct AlarmView: View {
         }
         .fullScreenCover(isPresented: $isPresentingCreateView) {
             NavigationStack {
-                CreateAlarmView(viewModel: viewModel)
+                CreateAlarmView(alarmViewModel: alarmViewModel, routineViewModel: routineViewModel)
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .alarmCreated)) { _ in
@@ -71,5 +72,5 @@ struct AlarmView: View {
 }
 
 #Preview {
-    AlarmView(viewModel: AlarmViewModel())
+    AlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
 }

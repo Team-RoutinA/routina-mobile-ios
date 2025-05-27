@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct CreateAlarmView: View {
-    @ObservedObject var viewModel: AlarmViewModel
+    @ObservedObject var alarmViewModel: AlarmViewModel
+    @ObservedObject var routineViewModel: RoutineViewModel
     @Environment(\.dismiss) var dismiss
     
     @State private var alarmTime: Date = Date()
@@ -83,7 +84,8 @@ struct CreateAlarmView: View {
             .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
                 NavigationStack {
                     SelectRoutineView(
-                        viewModel: viewModel,
+                        alarmViewModel: alarmViewModel,
+                        routineViewModel: routineViewModel,
                         alarmModel: AlarmModel(
                             alarmTime: alarmTime,
                             weekdays: selectedWeekdays,
@@ -252,6 +254,6 @@ struct CreateAlarmView: View {
 
 #Preview {
     NavigationStack {
-        CreateAlarmView(viewModel: AlarmViewModel())
+        CreateAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
     }
 }
