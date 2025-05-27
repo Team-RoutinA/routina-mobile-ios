@@ -17,6 +17,8 @@ struct SelectRoutineView: View {
     @State private var selectedRoutines: [(title: String, type: String?)] = []
     @State private var showSnackBar: Bool = false
     
+    @State private var isPresentingSelectRoutineView = false
+    
     private var navigationTitle: String {
         "루틴 설정하기"
     }
@@ -26,46 +28,58 @@ struct SelectRoutineView: View {
     }
     
     var body: some View{
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 제목
-                    titleSection
-                        .padding(.top, 12)
-                        .padding(.horizontal, 12)
-                    
-                    // 알람 시간
-                    alarmTimeSection
-                    
-                    // 선택된 알람 루틴 (있을 때만 표시)
-                    selectedRoutinesSection
-                    
-                    Rectangle()
-                        .fill(Color.gray1)
-                        .frame(height: 8)
-                    
-                    // 내 모든 루틴
-                    myRoutinesSection
+        ZStack {
+            Color.white.ignoresSafeArea()
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // 제목
+                        titleSection
+                            .padding(.top, 12)
+                            .padding(.horizontal, 12)
+                        
+                        // 알람 시간
+                        alarmTimeSection
+                        
+                        // 선택된 알람 루틴 (있을 때만 표시)
+                        selectedRoutinesSection
+                            .padding(.horizontal, 12)
+                        
+                        Rectangle()
+                            .fill(Color.gray1)
+                            .frame(height: 8)
+                        
+                        // 내 모든 루틴
+                        myRoutinesSection
+                            .padding(.horizontal, 12)
+                    }
                 }
+                .background(Color.white)
+                
+                // 생성 버튼
+                actionButtonSection
             }
-            .background(Color.white)
-        }
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .principal) {
-                Text(navigationTitle)
-                    .font(.routina(.body_sb16))
-                    .foregroundColor(.black)
+            .onReceive(NotificationCenter.default.publisher(for: .alarmCreated)) { _ in
+                isPresentingSelectRoutineView = false
+                print("알람 생성 완료 - CreateAlarmView 닫힘")
             }
-
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .medium))
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(navigationTitle)
+                        .font(.routina(.body_sb16))
                         .foregroundColor(.black)
+                }
+                
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.black)
+                    }
                 }
             }
         }
@@ -75,17 +89,18 @@ struct SelectRoutineView: View {
 
     private var titleSection: some View {
         Text("알람에 필요한 정보를 알려주세요")
+            .padding(.horizontal, 20)
             .font(.routina(.h2))
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 12)
             .padding(.top, 24)
     }
     
     private var alarmTimeSection: some View {
         VStack(spacing: 0) {
             RoutineSelectRow(
-                iconName: "alarm", // 프로젝트에 있는 아이콘 사용
+                iconName: "alarm",
                 title: alarmModel.timeText, // CreateAlarmView에서 받은 시간
                 subtitle: "기상!",
                 showChevron: false,
@@ -241,20 +256,37 @@ struct SelectRoutineView: View {
             .padding(.horizontal, 28)
         }
     }
+    
+    private var actionButtonSection: some View {
+        MainButton(
+            text: "생성 완료",
+            enable: !selectedRoutines.isEmpty,
+            action: {
+                let newAlarm = AlarmModel(
+                    alarmTime: alarmModel.alarmTime,
+                    weekdays: alarmModel.weekdays,
+                    routines: selectedRoutines,
+                    isOn: alarmModel.isOn,
+                    volume: alarmModel.volume,
+                    isVibrationOn: alarmModel.isVibrationOn
+                )
+                viewModel.alarms.append(newAlarm)
+                NotificationCenter.default.post(name: .alarmCreated, object: nil)
+                dismiss()
+            }
+        )
+        .padding(.horizontal, 20)
+        .padding(.bottom, 16)
+    }
 }
 
-//#Preview {
-//    NavigationStack {
-//        CreateAlarmView(viewModel: AlarmViewModel())
-//    }
-//}
 #Preview {
     NavigationStack {
         SelectRoutineView(
             viewModel: AlarmViewModel(),
             alarmModel: AlarmModel(
-                alarmTime: Calendar.current.date(from: DateComponents(hour: 7, minute: 20)) ?? Date(),
-                weekdays: Set(["월", "수", "금"]),
+                alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
+                weekdays: Set(["월", "화", "수"]),
                 routines: [],
                 isOn: true,
                 volume: 0.5,
@@ -263,3 +295,4 @@ struct SelectRoutineView: View {
         )
     }
 }
+

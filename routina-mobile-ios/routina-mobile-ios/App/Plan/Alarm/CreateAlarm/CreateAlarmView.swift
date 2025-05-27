@@ -212,11 +212,12 @@ struct CreateAlarmView: View {
     }
     
     private var weekdaySelectionSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(spacing: 8) {
             Text("반복 요일")
                 .font(.routina(.body_sb16))
                 .foregroundColor(.black)
                 .padding(.horizontal, 20)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             HStack(spacing: 8) {
                 ForEach(weekdays, id: \.self) { day in
@@ -232,7 +233,6 @@ struct CreateAlarmView: View {
                     }
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
         }
     }
