@@ -36,14 +36,12 @@ struct SelectRoutineView: View {
                         // 제목
                         titleSection
                             .padding(.top, 12)
-                            .padding(.horizontal, 12)
                         
                         // 알람 시간
                         alarmTimeSection
                         
                         // 선택된 알람 루틴 (있을 때만 표시)
                         selectedRoutinesSection
-                            .padding(.horizontal, 12)
                         
                         Rectangle()
                             .fill(Color.gray1)
@@ -51,9 +49,9 @@ struct SelectRoutineView: View {
                         
                         // 내 모든 루틴
                         myRoutinesSection
-                            .padding(.horizontal, 12)
                     }
                 }
+                .padding(.horizontal, 12)
                 .background(Color.white)
                 
                 // 생성 버튼
