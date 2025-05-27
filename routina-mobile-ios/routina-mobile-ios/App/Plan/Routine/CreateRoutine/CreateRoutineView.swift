@@ -26,6 +26,8 @@ struct CreateRoutineView: View {
     @State private var hasInitialized = false
     @State private var refreshTrigger = false
     
+    @State private var isShowingDeleteAlert = false
+    
     // 생성 모드용 이니셜라이저
     init(viewModel: RoutineViewModel) {
         self.viewModel = viewModel
@@ -75,6 +77,11 @@ struct CreateRoutineView: View {
                         
                         // 성공 기준
                         successCriteriaSection
+                        
+                        // 삭제 버튼
+                        if isEditMode {
+                            deleteTextButtonSection
+                        }
                     }
                 }
                 .background(Color.white)
@@ -130,6 +137,16 @@ struct CreateRoutineView: View {
                     }
                 }
             )
+            .alert("정말 삭제하시겠어요?", isPresented: $isShowingDeleteAlert) {
+                Button("삭제", role: .destructive) {
+                    if let index = editingIndex {
+                        viewModel.deleteRoutine(at: index)
+                        dismiss()
+                    }
+                }
+                Button("취소", role: .cancel) { }
+            }
+
             .padding(12)
         }
     }
@@ -292,8 +309,23 @@ struct CreateRoutineView: View {
                     )
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                //.padding(.bottom, 20)
         }
+    }
+    
+    private var deleteTextButtonSection: some View {
+        Button(action: {
+            isShowingDeleteAlert = true
+        }) {
+            Text("루틴 삭제하기")
+                .font(.routina(.button14))
+                .foregroundColor(.red)
+                .underline()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 20)
+                .padding(.horizontal, 20)
+        }
+        .padding(.top, 10)
     }
     
     private var actionButtonSection: some View {
@@ -317,12 +349,10 @@ struct CreateRoutineView: View {
                     if isEditMode {
                         // 수정 모드
                         if let index = editingIndex {
-                            print("수정 모드: 인덱스 \(index)")
                             viewModel.updateRoutine(at: index, with: routine)
                         }
                     } else {
                         // 생성 모드
-                        print("생성 모드")
                         viewModel.addRoutine(routine)
                     }
                     
