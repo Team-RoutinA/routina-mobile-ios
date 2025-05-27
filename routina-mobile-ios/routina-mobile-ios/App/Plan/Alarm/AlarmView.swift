@@ -12,11 +12,27 @@ struct AlarmView: View {
     @ObservedObject var routineViewModel: RoutineViewModel
     @State private var isPresentingCreateView = false
 
-    // 임시로 가장 가까운 알람 시간 기준 남은 시간 텍스트 계산
     var nextAlarmText: String {
-        // 실제 서버 연결 시 viewModel에서 nextAlarm까지 계산
-        // 여기서는 첫 번째 알람 시간 하드코딩 기준으로 예시
-        return "1시간 19분 후 울려요"
+        let now = Date()
+        
+        // 활성화된 알람 중 미래 알람만 필터링
+        let upcomingAlarms = alarmViewModel.alarms
+            .filter { $0.isOn && $0.alarmTime > now }
+            .sorted { $0.alarmTime < $1.alarmTime } // 가장 빠른 알람 순으로 정렬
+
+        guard let nextAlarm = upcomingAlarms.first else {
+            return "예정된 알람이 없어요"
+        }
+
+        let interval = Int(nextAlarm.alarmTime.timeIntervalSince(now))
+        let hours = interval / 3600
+        let minutes = (interval % 3600) / 60
+
+        if hours > 0 {
+            return "\(hours)시간 \(minutes)분 후 울려요"
+        } else {
+            return "\(minutes)분 후 울려요"
+        }
     }
 
     var body: some View {
