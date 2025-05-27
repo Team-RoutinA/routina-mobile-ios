@@ -34,78 +34,68 @@ struct CreateAlarmView: View {
     }
     
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 제목
-                    titleSection
-                    
-                    // 알람 시간
-                    alarmTimeSection
-                    
-                    // 음량 설정
-                    volumeSection
-                    
-                    // 진동 여부
-                    vibrationSection
-                    
-                    // 반복 요일
-                    weekdaySelectionSection
+        ZStack {
+            Color.white.ignoresSafeArea()
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // 제목
+                        titleSection
+                        
+                        // 알람 시간
+                        alarmTimeSection
+                        
+                        // 음량 설정
+                        volumeSection
+                        
+                        // 진동 여부
+                        vibrationSection
+                        
+                        // 반복 요일
+                        weekdaySelectionSection
+                    }
                 }
+                .background(Color.white)
+                
+                // 다음으로 버튼
+                actionButtonSection
             }
-            .background(Color.white)
-            
-            // 다음으로 버튼
-            actionButtonSection
-        }
-        .background(Color.white)
-        .navigationTitle(navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack(spacing: 4) {
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    Text(navigationTitle)
+                        .font(.routina(.body_sb16))
+                        .foregroundColor(.black)
+                }
+
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
+                            .foregroundColor(.black)
                     }
-                    .foregroundColor(.black)
                 }
             }
-        }
-        .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
-            NavigationStack {
-                SelectRoutineView(
-                    viewModel: viewModel,
-                    alarmModel: AlarmModel(
-                        alarmTime: alarmTime,
-                        weekdays: selectedWeekdays,  // Set<String> 그대로 전달
-                        routines: [], // 나중에 SelectRoutineView에서 선택
-                        isOn: true,
-                        volume: Double(volumeFloat),
-                        isVibrationOn: isVibrationOn
+            .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
+                NavigationStack {
+                    SelectRoutineView(
+                        viewModel: viewModel,
+                        alarmModel: AlarmModel(
+                            alarmTime: alarmTime,
+                            weekdays: selectedWeekdays,
+                            routines: [],
+                            isOn: true,
+                            volume: Double(volumeFloat),
+                            isVibrationOn: isVibrationOn
+                        )
                     )
-                )
+                }
             }
+            .padding(12)
         }
-        .fullScreenCover(isPresented: $isPresentingSelectRoutineView) {
-            NavigationStack {
-                SelectRoutineView(
-                    viewModel: viewModel,
-                    alarmModel: AlarmModel(
-                        alarmTime: alarmTime,
-                        weekdays: selectedWeekdays,
-                        routines: [],
-                        isOn: true,
-                        volume: Double(volumeFloat),
-                        isVibrationOn: isVibrationOn
-                    )
-                )
-            }
-        }
-        .padding(12)
     }
     
     // MARK: - View Components
