@@ -21,14 +21,16 @@ struct CounterRow: View {
             Spacer()
 
             // [- 20 +] 부분
-            HStack(spacing: 16) {
+            HStack(spacing: 14) {
                 // ➖ 버튼
                 Button(action: {
                     if value > 0 { value -= 1 }
                 }) {
                     Image("minus")
                         .resizable()
-                        .frame(width: 18, height: 3)
+                        .frame(width: 18, height: 2.5)
+                        .contentShape(Rectangle())
+                        .frame(width: 20, height: 20, alignment: .center)
                 }
 
                 // 숫자 표시
@@ -44,6 +46,8 @@ struct CounterRow: View {
                     Image("plus")
                         .resizable()
                         .frame(width: 18, height: 18)
+                        .contentShape(Rectangle())
+                        .frame(width: 20, height: 20, alignment: .center)
                 }
             }
             .frame(width: 96, height: 36)
