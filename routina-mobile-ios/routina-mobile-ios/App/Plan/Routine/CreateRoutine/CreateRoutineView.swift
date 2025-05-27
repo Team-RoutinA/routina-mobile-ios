@@ -92,8 +92,6 @@ struct CreateRoutineView: View {
                     HStack(spacing: 4) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 18, weight: .medium))
-                        Text("뒤로")
-                            .font(.system(size: 16, weight: .medium))
                     }
                     .foregroundColor(.black)
                 }
@@ -130,6 +128,7 @@ struct CreateRoutineView: View {
                 }
             }
         )
+        .padding(12)
     }
     
     // MARK: - Setup Methods
@@ -295,50 +294,49 @@ struct CreateRoutineView: View {
     }
     
     private var actionButtonSection: some View {
-        Button(buttonTitle) {
-            if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
-                isSuccessSnackBar = false
-                showSnackBar = true
-            } else {
-                let routine = RoutineModel(
-                    title: routineName,
-                    icon: selectedType.tagImageName,
-                    routineType: selectedType,
-                    goalCount: goalCount > 0 ? goalCount : nil,
-                    limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
-                    successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
-                )
-                if isEditMode {
-                    // 수정 모드
-                    if let index = editingIndex {
-                        print("수정 모드: 인덱스 \(index)")
-                        viewModel.updateRoutine(at: index, with: routine)
-                    }
+        MainButton(
+            text: buttonTitle,
+            enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
+            action: {
+                if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
+                    isSuccessSnackBar = false
+                    showSnackBar = true
                 } else {
-                    // 생성 모드
-                    print("생성 모드")
-                    viewModel.addRoutine(routine)
+                    let routine = RoutineModel(
+                        title: routineName,
+                        icon: selectedType.tagImageName,
+                        routineType: selectedType,
+                        goalCount: goalCount > 0 ? goalCount : nil,
+                        limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
+                        successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
+                    )
+                    
+                    if isEditMode {
+                        // 수정 모드
+                        if let index = editingIndex {
+                            print("수정 모드: 인덱스 \(index)")
+                            viewModel.updateRoutine(at: index, with: routine)
+                        }
+                    } else {
+                        // 생성 모드
+                        print("생성 모드")
+                        viewModel.addRoutine(routine)
+                    }
+                    
+                    isSuccessSnackBar = true
+                    showSnackBar = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                        dismiss()
+                    }
                 }
                 
-                isSuccessSnackBar = true
-                showSnackBar = true
-                
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                    dismiss()
+                // 자동으로 스낵바 숨기기
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    showSnackBar = false
                 }
             }
-            
-            // 자동으로 스낵바 숨기기
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                showSnackBar = false
-            }
-        }
-        .font(.routina(.body_sb16))
-        .foregroundColor(.white)
-        .frame(maxWidth: .infinity, minHeight: 48)
-        .background(Color.mainBlue)
-        .cornerRadius(12)
-        .padding(.horizontal, 20)
+        )
         .padding(.bottom, 20)
     }
 }
