@@ -12,7 +12,7 @@ struct AlarmCard: View {
     let weekdays: [String]
     let routines: [(title: String, type: String?)] // 루틴 제목 + 태그 타입
     @Binding var isOn: Bool
-    let onMoreTapped: () -> Void
+    let onDelete: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -77,10 +77,16 @@ struct AlarmCard: View {
                 }
             }
 
-            // 더보기 버튼
+            // 더보기 메뉴
             HStack {
                 Spacer()
-                Button(action: onMoreTapped) {
+                Menu {
+                    Button(role: .destructive) {
+                        onDelete()
+                    } label: {
+                        Label("삭제하기", systemImage: "trash")
+                    }
+                } label: {
                     Image(systemName: "ellipsis")
                         .foregroundColor(.gray)
                 }
@@ -104,29 +110,19 @@ struct AlarmCard: View {
     }
 }
 
-//
-//#Preview {
-//    AlarmCard(
-//        timeText: "오전 7:20",
-//        weekdays: ["월", "수", "금"],
-//        isOn: true,
-//        routines: [
-//            ("물 한 잔 마시기", "단순형"),
-//            ("스트레칭 5분", "시간형"),
-//            ("오늘 일정 간단히 검토", "단순형"),
-//            ("아침 간식 준비 (바나나, 요거트)", "단순형"),
-//            ("출근 복장 최종 점검", "단순형")
-//        ],
-//        onToggle: { isOn in
-//            print("알람 토글: \(isOn)")
-//        },
-//        onMoreTapped: {
-//            print("더보기 버튼 탭")
-//        }
-//    )
-//    .padding()
-//    .background(Color.gray.opacity(0.1))
-//}
+struct StatefulPreviewWrapper<Value, Content: View>: View {
+    @State private var value: Value // 내부 상태 저장
+    var content: (Binding<Value>) -> Content // 이 상태를 바인딩으로 넘김
+
+    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
+        _value = State(initialValue: value) // 초기값 세팅
+        self.content = content
+    }
+
+    var body: some View {
+        content($value) // 바인딩 전달
+    }
+}
 
 #Preview {
     StatefulPreviewWrapper(true) { $isOn in
@@ -142,26 +138,9 @@ struct AlarmCard: View {
                 ("출근 복장 최종 점검", "단순형")
             ],
             isOn: $isOn,
-            onMoreTapped: {
-                print("더보기 버튼 탭")
-            }
+            onDelete: {}
         )
         .padding()
         .background(Color.gray.opacity(0.1))
-    }
-}
-
-
-struct StatefulPreviewWrapper<Value, Content: View>: View {
-    @State private var value: Value // 내부 상태 저장
-    var content: (Binding<Value>) -> Content // 이 상태를 바인딩으로 넘김
-
-    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
-        _value = State(initialValue: value) // 초기값 세팅
-        self.content = content
-    }
-
-    var body: some View {
-        content($value) // 바인딩 전달
     }
 }
