@@ -8,13 +8,13 @@
 import SwiftUI
 
 struct SelectRoutineView: View {
-    @ObservedObject var viewModel: AlarmViewModel
-    @ObservedObject var routineViewModel: RoutineViewModel = RoutineViewModel()
+    @ObservedObject var alarmViewModel: AlarmViewModel
+    @ObservedObject var routineViewModel: RoutineViewModel
     @Environment(\.dismiss) var dismiss
     
     let alarmModel: AlarmModel
     
-    @State private var selectedRoutines: [(title: String, type: String?)] = []
+    @State private var selectedRoutines: [RoutineModel] = []
     @State private var isPresentingSelectRoutineView = false
     
     private var navigationTitle: String {
@@ -110,14 +110,12 @@ struct SelectRoutineView: View {
         .background(Color.sub3Blue)
     }
     
-    private func addToSelectedRoutines(_ routine: (title: String, type: String?)) {
+    private func addToSelectedRoutines(_ routine: RoutineModel) {
         selectedRoutines.append(routine)
-        print("루틴 추가: \(routine.title)")
     }
-    
-    private func removeFromSelectedRoutines(_ routine: (title: String, type: String?)) {
-        selectedRoutines.removeAll { $0.title == routine.title }
-        print("루틴 제거: \(routine.title)")
+
+    private func removeFromSelectedRoutines(_ routine: RoutineModel) {
+        selectedRoutines.removeAll { $0.id == routine.id }
     }
     
     private func getIconName(for type: String?) -> String {
@@ -173,16 +171,14 @@ struct SelectRoutineView: View {
                         .foregroundColor(.gray5)
                         .padding(.horizontal, 20)
                 } else {
-                    ForEach(selectedRoutines.indices, id: \.self) { index in
-                        let routine = selectedRoutines[index]
+                    ForEach(selectedRoutines, id: \.id) { routine in
                         RoutineSelectRow(
-                            iconName: getIconName(for: routine.type),
+                            iconName: routine.icon,
                             title: routine.title,
-                            subtitle: getDisplayType(for: routine.type),
+                            subtitle: formatRoutineSubtitle(routine),
                             showChevron: false,
                             isPlaceholder: false,
                             onTap: {
-                                // 선택된 루틴에서 제거
                                 removeFromSelectedRoutines(routine)
                             }
                         )
@@ -215,7 +211,7 @@ struct SelectRoutineView: View {
                 } else {
                     // 선택되지 않은 루틴들만 표시
                     let unselectedRoutines = routineViewModel.routines.filter { routine in
-                        !selectedRoutines.contains { $0.title == routine.title }
+                        !selectedRoutines.contains { $0.id == routine.id }
                     }
                     
                     if unselectedRoutines.isEmpty {
@@ -241,7 +237,7 @@ struct SelectRoutineView: View {
                                 isPlaceholder: false,
                                 onTap: {
                                     // 선택되지 않은 루틴이므로 추가
-                                    addToSelectedRoutines((title: routine.title, type: routineTypeString))
+                                    addToSelectedRoutines(routine)
                                 }
                             )
                         }
@@ -261,12 +257,12 @@ struct SelectRoutineView: View {
                 let newAlarm = AlarmModel(
                     alarmTime: alarmModel.alarmTime,
                     weekdays: alarmModel.weekdays,
-                    routines: selectedRoutines,
+                    routines: selectedRoutines.map { ($0.title, $0.routineType?.displayName) },
                     isOn: alarmModel.isOn,
                     volume: alarmModel.volume,
                     isVibrationOn: alarmModel.isVibrationOn
                 )
-                viewModel.alarms.append(newAlarm)
+                alarmViewModel.alarms.append(newAlarm)
                 
                 SnackBarPresenter.show(text: "알람이 성공적으로 생성되었습니다.", isSuccess: true)
 
@@ -283,7 +279,8 @@ struct SelectRoutineView: View {
 #Preview {
     NavigationStack {
         SelectRoutineView(
-            viewModel: AlarmViewModel(),
+            alarmViewModel: AlarmViewModel(),
+            routineViewModel: RoutineViewModel(),
             alarmModel: AlarmModel(
                 alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
                 weekdays: Set(["월", "화", "수"]),
