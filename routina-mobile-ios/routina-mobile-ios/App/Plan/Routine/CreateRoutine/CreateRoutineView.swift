@@ -53,82 +53,85 @@ struct CreateRoutineView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            ScrollView {
-                VStack(spacing: 20) {
-                    // 제목
-                    titleSection
-                    
-                    // 루틴 제목
-                    routineNameSection
-                    
-                    // 타입 선택 박스
-                    typeSelectionSection
-                    
-                    // 타입 별 설명
-                    typeDescriptionSection
-                    
-                    // 타입에 따라 조건별 컴포넌트 표시
-                    counterSection
-                    
-                    // 성공 기준
-                    successCriteriaSection
+        ZStack {
+            Color.white.ignoresSafeArea()
+            VStack(spacing: 0) {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        // 제목
+                        titleSection
+                        
+                        // 루틴 제목
+                        routineNameSection
+                        
+                        // 타입 선택 박스
+                        typeSelectionSection
+                        
+                        // 타입 별 설명
+                        typeDescriptionSection
+                        
+                        // 타입에 따라 조건별 컴포넌트 표시
+                        counterSection
+                        
+                        // 성공 기준
+                        successCriteriaSection
+                    }
                 }
+                .background(Color.white)
+                
+                // 루틴 생성/수정 버튼
+                actionButtonSection
             }
             .background(Color.white)
-            
-            // 루틴 생성/수정 버튼
-            actionButtonSection
-        }
-        .background(Color.white)
-        .navigationTitle(navigationTitle)
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationBarBackButtonHidden(true)
-        .toolbar {
-            ToolbarItem(placement: .navigationBarLeading) {
-                Button(action: {
-                    dismiss()
-                }) {
-                    HStack(spacing: 4) {
-                        Image(systemName: "chevron.left")
-                            .font(.system(size: 18, weight: .medium))
+            .navigationTitle(navigationTitle)
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(true)
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        HStack(spacing: 4) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 18, weight: .medium))
+                        }
+                        .foregroundColor(.black)
                     }
-                    .foregroundColor(.black)
                 }
             }
-        }
-        .onAppear {
-            if let routine = editingRoutine {
-                // 강제로 값 설정
-                DispatchQueue.main.async {
-                    self.routineName = routine.title
-                    self.selectedType = routine.routineType ?? self.getRoutineType(from: routine.icon)
-                    self.goalCount = routine.goalCount ?? 0
-                    self.limitMinutes = routine.limitMinutes ?? 0
-                    self.successStandard = routine.successStandard ?? ""
+            .onAppear {
+                if let routine = editingRoutine {
+                    // 강제로 값 설정
+                    DispatchQueue.main.async {
+                        self.routineName = routine.title
+                        self.selectedType = routine.routineType ?? self.getRoutineType(from: routine.icon)
+                        self.goalCount = routine.goalCount ?? 0
+                        self.limitMinutes = routine.limitMinutes ?? 0
+                        self.successStandard = routine.successStandard ?? ""
+                    }
                 }
+                setupInitialValues()
             }
-            setupInitialValues()
-        }
-        .overlay(
-            Group {
-                if showSnackBar {
-                    VStack {
-                        Spacer()
-                        SnackBar(
-                            text: isSuccessSnackBar ?
+            .overlay(
+                Group {
+                    if showSnackBar {
+                        VStack {
+                            Spacer()
+                            SnackBar(
+                                text: isSuccessSnackBar ?
                                 (isEditMode ? "루틴이 성공적으로 수정되었습니다." : "루틴이 성공적으로 생성되었습니다.") :
-                                (isEditMode ? "루틴 수정에 실패하였습니다." : "루틴 생성에 실패하였습니다."),
-                            isSuccess: isSuccessSnackBar
-                        )
-                        .padding(.bottom, 20)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .animation(.easeInOut, value: showSnackBar)
+                                    (isEditMode ? "루틴 수정에 실패하였습니다." : "루틴 생성에 실패하였습니다."),
+                                isSuccess: isSuccessSnackBar
+                            )
+                            .padding(.bottom, 20)
+                            .transition(.move(edge: .bottom).combined(with: .opacity))
+                            .animation(.easeInOut, value: showSnackBar)
+                        }
                     }
                 }
-            }
-        )
-        .padding(12)
+            )
+            .padding(12)
+        }
     }
     
     // MARK: - Setup Methods

@@ -15,8 +15,6 @@ struct SelectRoutineView: View {
     let alarmModel: AlarmModel
     
     @State private var selectedRoutines: [(title: String, type: String?)] = []
-    @State private var showSnackBar: Bool = false
-    
     @State private var isPresentingSelectRoutineView = false
     
     private var navigationTitle: String {
@@ -269,8 +267,12 @@ struct SelectRoutineView: View {
                     isVibrationOn: alarmModel.isVibrationOn
                 )
                 viewModel.alarms.append(newAlarm)
-                NotificationCenter.default.post(name: .alarmCreated, object: nil)
-                dismiss()
+                
+                SnackBarPresenter.show(text: "알람이 성공적으로 생성되었습니다.", isSuccess: true)
+
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    NotificationCenter.default.post(name: .alarmCreated, object: nil)
+                }
             }
         )
         .padding(.horizontal, 20)
