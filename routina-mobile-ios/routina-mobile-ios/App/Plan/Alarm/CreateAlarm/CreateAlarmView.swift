@@ -28,6 +28,11 @@ struct CreateAlarmView: View {
         "다음으로"
     }
     
+    // 버튼 활성화 조건: 반복 요일이 하나 이상 선택되어야 함
+    private var isButtonEnabled: Bool {
+        !selectedWeekdays.isEmpty
+    }
+    
     var body: some View {
         VStack(spacing: 0) {
             ScrollView {
@@ -245,6 +250,7 @@ struct CreateAlarmView: View {
     private var actionButtonSection: some View {
         MainButton(
             text: buttonTitle,
+            enable: isButtonEnabled,
             action: {
                 isPresentingSelectRoutineView = true
             }
