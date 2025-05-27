@@ -35,7 +35,6 @@ struct SelectRoutineView: View {
                     VStack(spacing: 20) {
                         // 제목
                         titleSection
-                            .padding(.top, 12)
                         
                         // 알람 시간
                         alarmTimeSection
@@ -51,7 +50,8 @@ struct SelectRoutineView: View {
                         myRoutinesSection
                     }
                 }
-                .padding(.horizontal, 12)
+                .padding(12)
+                .padding(.horizontal, 8)
                 .background(Color.white)
                 
                 // 생성 버튼
@@ -92,7 +92,7 @@ struct SelectRoutineView: View {
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 12)
-            .padding(.top, 24)
+            .padding(.top, 16)
     }
     
     private var alarmTimeSection: some View {

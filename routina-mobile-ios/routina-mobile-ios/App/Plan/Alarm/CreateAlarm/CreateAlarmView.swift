@@ -55,6 +55,7 @@ struct CreateAlarmView: View {
                         weekdaySelectionSection
                     }
                 }
+                .padding(12)
                 .background(Color.white)
                 
                 // 다음으로 버튼
@@ -94,7 +95,7 @@ struct CreateAlarmView: View {
                     )
                 }
             }
-            .padding(12)
+            
         }
     }
     
@@ -106,7 +107,7 @@ struct CreateAlarmView: View {
             .foregroundColor(.black)
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, 20)
-            .padding(.top, 24)
+            .padding(.top, 16)
     }
 
     private var alarmTimeSection: some View {
