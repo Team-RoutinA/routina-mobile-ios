@@ -77,6 +77,11 @@ struct CreateRoutineView: View {
                         
                         // 성공 기준
                         successCriteriaSection
+                        
+                        // 삭제 버튼
+                        if isEditMode {
+                            deleteTextButtonSection
+                        }
                     }
                 }
                 .background(Color.white)
@@ -304,68 +309,68 @@ struct CreateRoutineView: View {
                     )
                 }
                 .padding(.horizontal, 20)
-                .padding(.bottom, 20)
+                //.padding(.bottom, 20)
         }
     }
     
+    private var deleteTextButtonSection: some View {
+        Button(action: {
+            isShowingDeleteAlert = true
+        }) {
+            Text("루틴 삭제하기")
+                .font(.routina(.button14))
+                .foregroundColor(.red)
+                .underline()
+                .frame(maxWidth: .infinity, alignment: .center)
+                .padding(.bottom, 20)
+                .padding(.horizontal, 20)
+        }
+        .padding(.top, 10)
+    }
+    
     private var actionButtonSection: some View {
-        VStack{
-            if isEditMode {
-                Button(action: {
-                    isShowingDeleteAlert = true
-                }) {
-                    Text("루틴 삭제하기")
-                        .foregroundColor(.red)
-                        .font(.routina(.body_m16))
-                        .padding()
-                }
-                .padding(.horizontal, 24)
-            }
-            MainButton(
-                text: buttonTitle,
-                enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
-                action: {
-                    if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
-                        isSuccessSnackBar = false
-                        showSnackBar = true
+        MainButton(
+            text: buttonTitle,
+            enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
+            action: {
+                if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
+                    isSuccessSnackBar = false
+                    showSnackBar = true
+                } else {
+                    let routine = RoutineModel(
+                        title: routineName,
+                        icon: selectedType.tagImageName,
+                        routineType: selectedType,
+                        goalCount: goalCount > 0 ? goalCount : nil,
+                        limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
+                        successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
+                    )
+                    
+                    if isEditMode {
+                        // 수정 모드
+                        if let index = editingIndex {
+                            viewModel.updateRoutine(at: index, with: routine)
+                        }
                     } else {
-                        let routine = RoutineModel(
-                            title: routineName,
-                            icon: selectedType.tagImageName,
-                            routineType: selectedType,
-                            goalCount: goalCount > 0 ? goalCount : nil,
-                            limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
-                            successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
-                        )
-                        
-                        if isEditMode {
-                            // 수정 모드
-                            if let index = editingIndex {
-                                print("수정 모드: 인덱스 \(index)")
-                                viewModel.updateRoutine(at: index, with: routine)
-                            }
-                        } else {
-                            // 생성 모드
-                            print("생성 모드")
-                            viewModel.addRoutine(routine)
-                        }
-                        
-                        isSuccessSnackBar = true
-                        showSnackBar = true
-                        
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
-                            dismiss()
-                        }
+                        // 생성 모드
+                        viewModel.addRoutine(routine)
                     }
                     
-                    // 자동으로 스낵바 숨기기
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                        showSnackBar = false
+                    isSuccessSnackBar = true
+                    showSnackBar = true
+                    
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                        dismiss()
                     }
                 }
-            )
-            .padding(.bottom, 20)
-        }
+                
+                // 자동으로 스낵바 숨기기
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    showSnackBar = false
+                }
+            }
+        )
+        .padding(.bottom, 20)
     }
 }
 
