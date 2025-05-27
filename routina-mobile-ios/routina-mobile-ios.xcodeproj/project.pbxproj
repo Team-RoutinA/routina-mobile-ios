@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3794FF252DE6369400B30162 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 3794FF242DE6369400B30162 /* FSCalendar */; };
 		37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 37B5E0722DE2F71A0043E23B /* Alamofire */; };
 		65C759CD2DE3093600D80394 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 65C759CC2DE3093600D80394 /* Moya */; };
 /* End PBXBuildFile section */
@@ -55,6 +56,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				65C759CD2DE3093600D80394 /* Moya in Frameworks */,
+				3794FF252DE6369400B30162 /* FSCalendar in Frameworks */,
 				37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -109,6 +111,7 @@
 			packageProductDependencies = (
 				37B5E0722DE2F71A0043E23B /* Alamofire */,
 				65C759CC2DE3093600D80394 /* Moya */,
+				3794FF242DE6369400B30162 /* FSCalendar */,
 			);
 			productName = "routina-mobile-ios";
 			productReference = 65BF13172DE2D8BD00422691 /* routina-mobile-ios.app */;
@@ -141,6 +144,7 @@
 			packageReferences = (
 				37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */,
 				37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */,
+				3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 65BF13182DE2D8BD00422691 /* Products */;
@@ -376,6 +380,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.8.4;
+			};
+		};
 		37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
@@ -395,6 +407,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		3794FF242DE6369400B30162 /* FSCalendar */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */;
+			productName = FSCalendar;
+		};
 		37B5E0722DE2F71A0043E23B /* Alamofire */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
