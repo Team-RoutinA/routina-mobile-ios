@@ -297,50 +297,66 @@ struct CreateRoutineView: View {
     }
     
     private var actionButtonSection: some View {
-        MainButton(
-            text: buttonTitle,
-            enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
-            action: {
-                if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
-                    isSuccessSnackBar = false
-                    showSnackBar = true
-                } else {
-                    let routine = RoutineModel(
-                        title: routineName,
-                        icon: selectedType.tagImageName,
-                        routineType: selectedType,
-                        goalCount: goalCount > 0 ? goalCount : nil,
-                        limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
-                        successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
-                    )
-                    
-                    if isEditMode {
-                        // 수정 모드
-                        if let index = editingIndex {
-                            print("수정 모드: 인덱스 \(index)")
-                            viewModel.updateRoutine(at: index, with: routine)
-                        }
-                    } else {
-                        // 생성 모드
-                        print("생성 모드")
-                        viewModel.addRoutine(routine)
-                    }
-                    
-                    isSuccessSnackBar = true
-                    showSnackBar = true
-                    
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+        VStack{
+            if isEditMode {
+                Button(action: {
+                    if let index = editingIndex {
+                        viewModel.deleteRoutine(at: index)
                         dismiss()
                     }
+                }) {
+                    Text("루틴 삭제하기")
+                        .foregroundColor(.red)
+                        .font(.routina(.body_m16))
+                        .padding()
                 }
-                
-                // 자동으로 스낵바 숨기기
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    showSnackBar = false
-                }
+                .padding(.horizontal, 24)
             }
-        )
-        .padding(.bottom, 20)
+            MainButton(
+                text: buttonTitle,
+                enable: !routineName.trimmingCharacters(in: .whitespaces).isEmpty,
+                action: {
+                    if routineName.trimmingCharacters(in: .whitespaces).isEmpty {
+                        isSuccessSnackBar = false
+                        showSnackBar = true
+                    } else {
+                        let routine = RoutineModel(
+                            title: routineName,
+                            icon: selectedType.tagImageName,
+                            routineType: selectedType,
+                            goalCount: goalCount > 0 ? goalCount : nil,
+                            limitMinutes: limitMinutes > 0 ? limitMinutes : nil,
+                            successStandard: successStandard.trimmingCharacters(in: .whitespaces).isEmpty ? nil : successStandard
+                        )
+                        
+                        if isEditMode {
+                            // 수정 모드
+                            if let index = editingIndex {
+                                print("수정 모드: 인덱스 \(index)")
+                                viewModel.updateRoutine(at: index, with: routine)
+                            }
+                        } else {
+                            // 생성 모드
+                            print("생성 모드")
+                            viewModel.addRoutine(routine)
+                        }
+                        
+                        isSuccessSnackBar = true
+                        showSnackBar = true
+                        
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                            dismiss()
+                        }
+                    }
+                    
+                    // 자동으로 스낵바 숨기기
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        showSnackBar = false
+                    }
+                }
+            )
+            .padding(.bottom, 20)
+        }
     }
 }
 
