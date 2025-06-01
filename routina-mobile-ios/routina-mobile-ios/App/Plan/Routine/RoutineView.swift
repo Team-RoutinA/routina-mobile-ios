@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RoutineView: View {
-    @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
+    @ObservedObject var viewModel: RoutineViewModel
     @State private var isPresentingCreateView = false
     @State private var isPresentingEditView = false
     @State private var selectedRoutineIndex: Int?
@@ -86,9 +86,9 @@ struct RoutineView: View {
                     }
             }
         }
+//        .onAppear {
+//            UserDefaults.standard.removeObject(forKey: "userId")
+//            print("✅ 로그아웃 완료: userId 삭제됨")
+//        }
     }
-}
-
-#Preview {
-    RoutineView()
 }

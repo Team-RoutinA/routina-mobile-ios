@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		379401CB2DEC43CF00B30162 /* CombineMoya in Frameworks */ = {isa = PBXBuildFile; productRef = 379401CA2DEC43CF00B30162 /* CombineMoya */; };
+		379401CD2DEC43D300B30162 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 379401CC2DEC43D300B30162 /* Moya */; };
 		3794FF252DE6369400B30162 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 3794FF242DE6369400B30162 /* FSCalendar */; };
 		37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 37B5E0722DE2F71A0043E23B /* Alamofire */; };
-		65C759CD2DE3093600D80394 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 65C759CC2DE3093600D80394 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,9 +56,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65C759CD2DE3093600D80394 /* Moya in Frameworks */,
 				3794FF252DE6369400B30162 /* FSCalendar in Frameworks */,
 				37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */,
+				379401CD2DEC43D300B30162 /* Moya in Frameworks */,
+				379401CB2DEC43CF00B30162 /* CombineMoya in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,8 +112,9 @@
 			name = "routina-mobile-ios";
 			packageProductDependencies = (
 				37B5E0722DE2F71A0043E23B /* Alamofire */,
-				65C759CC2DE3093600D80394 /* Moya */,
 				3794FF242DE6369400B30162 /* FSCalendar */,
+				379401CA2DEC43CF00B30162 /* CombineMoya */,
+				379401CC2DEC43D300B30162 /* Moya */,
 			);
 			productName = "routina-mobile-ios";
 			productReference = 65BF13172DE2D8BD00422691 /* routina-mobile-ios.app */;
@@ -143,8 +146,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */,
-				37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */,
 				3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				379401C92DEC43C200B30162 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 65BF13182DE2D8BD00422691 /* Products */;
@@ -380,6 +383,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		379401C92DEC43C200B30162 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
 		3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
@@ -396,17 +407,19 @@
 				minimumVersion = 5.10.2;
 			};
 		};
-		37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		379401CA2DEC43CF00B30162 /* CombineMoya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 379401C92DEC43C200B30162 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = CombineMoya;
+		};
+		379401CC2DEC43D300B30162 /* Moya */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 379401C92DEC43C200B30162 /* XCRemoteSwiftPackageReference "Moya" */;
+			productName = Moya;
+		};
 		3794FF242DE6369400B30162 /* FSCalendar */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */;
@@ -416,11 +429,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		65C759CC2DE3093600D80394 /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
