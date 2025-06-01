@@ -29,8 +29,7 @@ class RoutineViewModel: ObservableObject {
             type: isTimeType ? "duration" : type,
             goalValue: isTimeType ? nil : routine.goalCount,
             durationSeconds: isTimeType ? (routine.goalCount ?? 0) * 60 : nil,
-            deadlineTime: String(format: "%02d:%02d:%02d", (routine.limitMinutes ?? 0) / 60, (routine.limitMinutes ?? 0) % 60, 0),
-
+            deadlineTime: String(format: "%02d:%02d", (routine.limitMinutes ?? 0) / 60, (routine.limitMinutes ?? 0) % 60),
             successNote: routine.successStandard ?? ""
         )
 //        .sink(receiveCompletion: { completionResult in

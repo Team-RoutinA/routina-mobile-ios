@@ -8,7 +8,6 @@
 import Foundation
 
 struct CreateRoutineRequest: Encodable {
-    let user_id: String 
     let title: String
     let type: String
     let goal_value: Int?

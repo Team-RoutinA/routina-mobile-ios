@@ -23,7 +23,6 @@ class RoutineService {
     ) -> AnyPublisher<CreateRoutineResponse, Error> {
         
         let entity = CreateRoutineRequest(
-            user_id: userId,
             title: title,
             type: type,
             goal_value: goalValue,
@@ -43,7 +42,7 @@ class RoutineService {
             print("❌ JSON 인코딩 에러: \(error)")
         }
         
-        return provider.requestPublisher(.createRoutine(userId: userId, request: entity))
+        return provider.requestPublisher(.createRoutine(request: entity))
             .tryMap { response in
                 guard (200..<300).contains(response.statusCode) else {
                     print("[RoutineService] createRoutine status: \(response.statusCode)")
