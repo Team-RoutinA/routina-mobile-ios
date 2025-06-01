@@ -19,8 +19,9 @@ class RoutineService {
         goalValue: Int?,
         durationSeconds: Int?,
         deadlineTime: String,
-        successNote: String
-    ) -> AnyPublisher<Base<CreateRoutineResponse>, Error> {
+        successNote: String?
+    ) -> AnyPublisher<CreateRoutineResponse, Error> {
+        
         let entity = CreateRoutineRequest(
             user_id: userId,
             title: title,
@@ -32,14 +33,26 @@ class RoutineService {
         )
         
         return provider.requestPublisher(.createRoutine(request: entity))
+//            .tryMap { response in
+//                guard (200..<300).contains(response.statusCode) else {
+//                    print("[RoutineService] createRoutine status: \(response.statusCode)")
+//                    throw MoyaError.statusCode(response)
+//                }
+//                return response.data
+//            }
             .tryMap { response in
                 guard (200..<300).contains(response.statusCode) else {
-                    print("[RoutineService] creteRoutine status: \(response.statusCode)")
+                    print("[RoutineService] createRoutine status: \(response.statusCode)")
                     throw MoyaError.statusCode(response)
                 }
+                // ✅ 실제 서버 응답 바이트 → String으로 찍기
+                if let body = String(data: response.data, encoding: .utf8) {
+                    print("📥 서버 응답 원문: \(body)")
+                }
+
                 return response.data
             }
-            .decode(type: Base<CreateRoutineResponse>.self, decoder: JSONDecoder())
+            .decode(type: CreateRoutineResponse.self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }

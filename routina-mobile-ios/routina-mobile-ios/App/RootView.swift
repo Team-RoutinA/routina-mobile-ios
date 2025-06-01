@@ -8,23 +8,30 @@
 import SwiftUI
 
 struct RootView: View {
-    
+    @State private var isLoggedIn: Bool = UserDefaults.standard.string(forKey: "userId") != nil
+
     init() {
         setupTabAppearance()
     }
     
     var body: some View {
-        TabView {
-            Tab("계획", image: "planTab") {
-                PlanView()
-            }
-            
-            Tab("홈", image: "doTab") {
-                DoView()
-            }
-            
-            Tab("내 기록", image: "seeTab") {
-                SeeView()
+        NavigationStack {
+            if isLoggedIn {
+                TabView {
+                    Tab("계획", image: "planTab") {
+                        PlanView()
+                    }
+
+                    Tab("홈", image: "doTab") {
+                        DoView()
+                    }
+
+                    Tab("내 기록", image: "seeTab") {
+                        SeeView()
+                    }
+                }
+            } else {
+                LoginView(isLoggedIn: $isLoggedIn)
             }
         }
     }

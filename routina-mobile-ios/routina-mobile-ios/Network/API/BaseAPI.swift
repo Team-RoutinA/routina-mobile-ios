@@ -11,12 +11,9 @@ import Moya
 protocol BaseAPI: TargetType { }
 
 extension BaseAPI {
-    public var baseURL: URL {
-        guard let baseURL = Bundle.main.infoDictionary?["API_BASE_URL"] as? String else {
-            return URL(string: "dummy")!
-        }
-        
-        return URL(string: baseURL)!
+    var baseURL: URL {
+        let url = Bundle.main.infoDictionary?["API_BASE_URL"] as? String ?? "dummy"
+        return URL(string: url)!
     }
     
     public var headers: [String: String]? {

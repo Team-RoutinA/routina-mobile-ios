@@ -14,5 +14,7 @@
 		<string>Pretendard-SemiBold.otf</string>
 		<string>Pretendard-Thin.otf</string>
 	</array>
+    <key>API_BASE_URL</key>
+    <string>http://127.0.0.1:8000</string>
 </dict>
 </plist>

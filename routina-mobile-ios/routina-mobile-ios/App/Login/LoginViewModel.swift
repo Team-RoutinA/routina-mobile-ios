@@ -23,8 +23,8 @@ class LoginViewModel: ObservableObject {
                 if case .failure(let error) = completion {
                     self.loginError = "로그인 실패: \(error.localizedDescription)"
                 }
-            }, receiveValue: { response in
-                let userId = response.result.user_id
+            }, receiveValue: { userId in
+                print("로그인 성공 user_id: \(userId)")
                 UserDefaults.standard.set(userId, forKey: "userId")
                 self.isLoggedIn = true
             })

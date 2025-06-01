@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RoutineView: View {
-    @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
+    @ObservedObject var viewModel: RoutineViewModel
     @State private var isPresentingCreateView = false
     @State private var isPresentingEditView = false
     @State private var selectedRoutineIndex: Int?
@@ -87,8 +87,4 @@ struct RoutineView: View {
             }
         }
     }
-}
-
-#Preview {
-    RoutineView()
 }
