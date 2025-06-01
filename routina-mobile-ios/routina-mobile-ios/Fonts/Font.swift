@@ -51,4 +51,8 @@ extension Font {
     static var PretendardBold30: Font {
         return .pretend(type: .bold, size: 30)
     }
+    
+    static var PretendardBold72: Font {
+        return .pretend(type: .bold, size: 72)
+    }
 }
