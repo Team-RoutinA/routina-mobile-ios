@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AlarmScreenView: View {
+    @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
+    @State private var isPresentingExecutionView = false
     let alarmModel: AlarmModel
     
     // 날짜 포맷
@@ -27,26 +29,35 @@ struct AlarmScreenView: View {
     }
     
     var body: some View {
-        VStack(spacing: 54) {
-            Spacer()
-            
-            VStack(spacing: 0) {
-                Text(dateString)
-                    .font(.routina(.h1))
-                Text(timeString)
-                    .font(.PretendardBold72)
+        NavigationStack {
+            VStack(spacing: 54) {
+                Spacer()
+                
+                VStack(spacing: 0) {
+                    Text(dateString)
+                        .font(.routina(.h1))
+                    Text(timeString)
+                        .font(.PretendardBold72)
+                }
+                
+                Spacer()
+                
+                Image(.routinaLogo)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 256, height: 256)
+                
+                Spacer()
+                
+                MainButton(text: "알람 끄기") {
+                    isPresentingExecutionView = true
+                }
             }
-            
-            Spacer()
-            
-            Image(.routinaLogo)
-                .resizable()
-                .scaledToFit()
-                .frame(width: 256, height: 256)
-            
-            Spacer()
-            
-            MainButton(text: "알람 끄기") {}
+        }
+        .fullScreenCover(isPresented: $isPresentingExecutionView) {
+            NavigationStack {
+                RoutineExecutionView(alarmTime: alarmModel.alarmTime, viewModel: viewModel)
+            }
         }
     }
 }
