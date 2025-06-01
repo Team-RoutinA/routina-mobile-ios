@@ -15,7 +15,12 @@
 		<string>Pretendard-Thin.otf</string>
 	</array>
     <key>API_BASE_URL</key>
-    <string>http://127.0.0.1:8000</string>
+    <string>http://:8000</string>
+    <key>NSAppTransportSecurity</key>
+    <dict>
+        <key>NSAllowsArbitraryLoads</key>
+        <true/>
+    </dict>
     <key>UIUserInterfaceStyle</key>
     <string>Light</string>
 </dict>

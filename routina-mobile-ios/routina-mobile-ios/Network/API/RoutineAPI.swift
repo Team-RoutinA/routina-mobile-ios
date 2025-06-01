@@ -9,7 +9,7 @@ import Foundation
 import Moya
 
 enum RoutineAPI {
-    case createRoutine(request: CreateRoutineRequest)
+    case createRoutine(userId: String, request: CreateRoutineRequest)
 }
 
 extension RoutineAPI: BaseAPI {
@@ -29,8 +29,19 @@ extension RoutineAPI: BaseAPI {
     
     var task: Moya.Task {
         switch self {
-        case .createRoutine(let entity):
-            return .requestJSONEncodable(entity)
+        case .createRoutine(let userId, let request):
+            return .requestCompositeParameters(
+                bodyParameters: request.toDictionary(),
+                bodyEncoding: JSONEncoding.default,
+                urlParameters: ["user_id": userId]
+            )
         }
+    }
+}
+
+extension Encodable {
+    func toDictionary() -> [String: Any] {
+        guard let data = try? JSONEncoder().encode(self) else { return [:] }
+        return (try? JSONSerialization.jsonObject(with: data)) as? [String: Any] ?? [:]
     }
 }

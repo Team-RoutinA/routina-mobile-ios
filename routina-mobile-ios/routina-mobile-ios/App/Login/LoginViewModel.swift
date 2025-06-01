@@ -5,6 +5,8 @@
 //  Created by 이슬기 on 6/1/25.
 //
 
+// LoginViewModel.swift
+
 import Foundation
 import Combine
 
@@ -23,11 +25,21 @@ class LoginViewModel: ObservableObject {
                 if case .failure(let error) = completion {
                     self.loginError = "로그인 실패: \(error.localizedDescription)"
                 }
-            }, receiveValue: { userId in
-                print("로그인 성공 user_id: \(userId)")
-                UserDefaults.standard.set(userId, forKey: "userId")
+            }, receiveValue: { response in
+                // 🔍 여기서 실제로 뭐가 오는지 확인
+                print("📥 로그인 응답: \(response)")
+                print("📥 받은 user_id: \(response.user_id)")
+                
+                // UserDefaults에 저장
+                UserDefaults.standard.set(response.user_id, forKey: "userId")
+                
+                // 🔍 제대로 저장되었는지 확인
+                let saved = UserDefaults.standard.string(forKey: "userId")
+                print("💾 저장된 user_id: \(saved ?? "저장 실패")")
+                
                 self.isLoggedIn = true
             })
             .store(in: &cancellables)
     }
 }
+
