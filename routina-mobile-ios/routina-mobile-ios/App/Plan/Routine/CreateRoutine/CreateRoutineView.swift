@@ -366,7 +366,20 @@ struct CreateRoutineView: View {
                         }
                     } else {
                         // 생성 모드
-                        viewModel.addRoutine(routine)
+                        viewModel.addRoutine(routine) { success in
+                            isSuccessSnackBar = success
+                            showSnackBar = true
+
+                            if success {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                    dismiss()
+                                }
+                            }
+                        }
+
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                            showSnackBar = false
+                        }
                     }
                     
                     isSuccessSnackBar = true
