@@ -8,24 +8,31 @@
 import SwiftUI
 
 struct RootView: View {
+    @State private var selectedTab: Int = 1
     
     init() {
         setupTabAppearance()
     }
     
     var body: some View {
-        TabView {
-            Tab("계획", image: "planTab") {
-                PlanView()
-            }
+        TabView(selection: $selectedTab) {
+            PlanView()
+                .tabItem {
+                    Label("계획", image: "planTab")
+                }
+                .tag(0)
             
-            Tab("홈", image: "doTab") {
-                DoView()
-            }
+            DoView(selectedTab: $selectedTab)
+                .tabItem {
+                    Label("홈", image: "doTab")
+                }
+                .tag(1)
             
-            Tab("내 기록", image: "seeTab") {
-                SeeView()
-            }
+            SeeView()
+                .tabItem {
+                    Label("내 기록", image: "seeTab")
+                }
+                .tag(2)
         }
     }
     
