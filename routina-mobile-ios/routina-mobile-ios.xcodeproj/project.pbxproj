@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		3794FF252DE6369400B30162 /* FSCalendar in Frameworks */ = {isa = PBXBuildFile; productRef = 3794FF242DE6369400B30162 /* FSCalendar */; };
 		37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 37B5E0722DE2F71A0043E23B /* Alamofire */; };
-		65C759CD2DE3093600D80394 /* Moya in Frameworks */ = {isa = PBXBuildFile; productRef = 65C759CC2DE3093600D80394 /* Moya */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -55,7 +54,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				65C759CD2DE3093600D80394 /* Moya in Frameworks */,
 				3794FF252DE6369400B30162 /* FSCalendar in Frameworks */,
 				37B5E0732DE2F71A0043E23B /* Alamofire in Frameworks */,
 			);
@@ -110,7 +108,6 @@
 			name = "routina-mobile-ios";
 			packageProductDependencies = (
 				37B5E0722DE2F71A0043E23B /* Alamofire */,
-				65C759CC2DE3093600D80394 /* Moya */,
 				3794FF242DE6369400B30162 /* FSCalendar */,
 			);
 			productName = "routina-mobile-ios";
@@ -143,8 +140,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */,
-				37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */,
 				3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */,
+				379400232DEC078200B30162 /* XCRemoteSwiftPackageReference "Moya" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 65BF13182DE2D8BD00422691 /* Products */;
@@ -380,6 +377,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		379400232DEC078200B30162 /* XCRemoteSwiftPackageReference "Moya" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Moya/Moya.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 15.0.3;
+			};
+		};
 		3794FF232DE6369400B30162 /* XCRemoteSwiftPackageReference "FSCalendar" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/WenchaoD/FSCalendar.git";
@@ -396,14 +401,6 @@
 				minimumVersion = 5.10.2;
 			};
 		};
-		37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Moya/Moya.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 15.0.3;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -416,11 +413,6 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 37B5E0712DE2F71A0043E23B /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
-		};
-		65C759CC2DE3093600D80394 /* Moya */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 37B5E0762DE2F74E0043E23B /* XCRemoteSwiftPackageReference "Moya" */;
-			productName = Moya;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
