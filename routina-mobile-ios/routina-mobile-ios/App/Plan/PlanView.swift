@@ -26,9 +26,16 @@ struct PlanView: View {
             }
         }
         .background(Color.gray1)
+        .onAppear {
+            routineViewModel.fetchRoutines()
+        }
+        .onReceive(routineViewModel.$routines) { list in
+            alarmViewModel.updateRoutineMap(list)
+            alarmViewModel.fetchAlarms()
+        }
     }
 }
 
-#Preview {
-    PlanView()
-}
+//#Preview {
+//    PlanView()
+//}

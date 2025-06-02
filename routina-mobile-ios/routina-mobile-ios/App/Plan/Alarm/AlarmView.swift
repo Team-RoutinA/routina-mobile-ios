@@ -12,27 +12,36 @@ struct AlarmView: View {
     @ObservedObject var routineViewModel: RoutineViewModel
     @State private var isPresentingCreateView = false
 
-    var nextAlarmText: String {
+    private var nextAlarmText: String {
         let now = Date()
-        
-        // 활성화된 알람 중 미래 알람만 필터링
-        let upcomingAlarms = alarmViewModel.alarms
-            .filter { $0.isOn && $0.alarmTime > now }
-            .sorted { $0.alarmTime < $1.alarmTime } // 가장 빠른 알람 순으로 정렬
 
-        guard let nextAlarm = upcomingAlarms.first else {
-            return "예정된 알람이 없어요"
+        let candidates: [Date] = alarmViewModel.alarms.compactMap { alarm in
+            guard alarm.isOn else { return nil }
+
+            let intWeekdays = alarm.weekdays.compactMap {
+                AlarmViewModel.weekdayOrder.firstIndex(of: $0)
+            }
+
+            let next = AlarmViewModel.nextDate(
+                hhmm: AlarmViewModel.hhmm(alarm.alarmTime),
+                weekdays: intWeekdays
+            )
+            return next > now ? next : nil
         }
 
-        let interval = Int(nextAlarm.alarmTime.timeIntervalSince(now))
-        let hours = interval / 3600
-        let minutes = (interval % 3600) / 60
+        guard let nearest = candidates.min() else { return "예정된 알람이 없어요" }
 
-        if hours > 0 {
-            return "\(hours)시간 \(minutes)분 후 울려요"
-        } else {
-            return "\(minutes)분 후 울려요"
+        let diff   = Int(nearest.timeIntervalSince(now))
+        let days   = diff / 86_400
+        let hours  = (diff % 86_400) / 3_600
+        let mins   = (diff % 3_600)  / 60
+
+        if days > 0 {
+            return hours > 0 ? "\(days)일 \(hours)시간 후 울려요"
+                             : "\(days)일 후 울려요"
         }
+        return hours > 0 ? "\(hours)시간 \(mins)분 후 울려요"
+                         : "\(mins)분 후 울려요"
     }
 
     var body: some View {
@@ -59,7 +68,7 @@ struct AlarmView: View {
                     ForEach(Array(alarmViewModel.alarms.enumerated()), id: \.0) { (index, alarm) in
                         AlarmCard(
                             timeText : alarm.timeText,
-                            weekdays : Array(alarm.weekdays),
+                            weekdays : alarm.orderedWeekdays,
                             routines : alarm.routines,
                             isOn     : $alarmViewModel.alarms[index].isOn,
                             onDelete : { alarmViewModel.alarms.remove(at: index) }
@@ -71,6 +80,10 @@ struct AlarmView: View {
                 .padding(.top, 18)
             }
             .background(Color.gray1.ignoresSafeArea())
+            .onAppear {
+                routineViewModel.fetchRoutines()
+                alarmViewModel.fetchAlarms()
+            }
         }
         .fullScreenCover(isPresented: $isPresentingCreateView) {
             NavigationStack {
@@ -78,9 +91,11 @@ struct AlarmView: View {
             }
         }
         .onReceive(NotificationCenter.default.publisher(for: .alarmCreated)) { _ in
-            // 알람이 생성되었다는 신호를 받으면 CreateAlarmView 닫기
             isPresentingCreateView = false
-            print("알람 생성 완료")
+        }
+        .onAppear {
+            routineViewModel.fetchRoutines()
+            alarmViewModel.fetchAlarms()
         }
     }
 }
