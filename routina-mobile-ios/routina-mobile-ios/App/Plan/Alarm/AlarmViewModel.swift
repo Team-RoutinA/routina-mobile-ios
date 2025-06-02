@@ -165,5 +165,21 @@ final class AlarmViewModel: ObservableObject {
         }
         return today
     }
+    
+    // 알람 삭제
+    func deleteAlarm(at index: Int) {
+        let targetId = alarms[index].alarmId
+        service.deleteAlarm(targetId)
+            .sink(receiveCompletion: { [weak self] comp in
+                if case .failure(let err) = comp {
+                    print("❌ Alarm delete 실패:", err)
+                    SnackBarPresenter.show(text: "알람 삭제 실패", isSuccess: false)
+                }
+            }, receiveValue: { [weak self] in
+                self?.alarms.remove(at: index)
+                SnackBarPresenter.show(text: "알람이 삭제되었습니다.", isSuccess: true)
+            })
+            .store(in: &bag)
+    }
 }
 
