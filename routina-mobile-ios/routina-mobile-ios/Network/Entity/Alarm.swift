@@ -9,8 +9,9 @@ import Foundation
 
 struct AlarmCreateRequest: Encodable {
     let time: String
-    let status: String
+    let vibration_on: Bool
     let sound_volume: Double
+    let status: String
     let repeat_days: [Int]?
     struct Routine: Codable {
         let routine_id: String

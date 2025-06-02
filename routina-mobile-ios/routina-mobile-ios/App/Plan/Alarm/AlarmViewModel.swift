@@ -16,24 +16,29 @@ final class AlarmViewModel: ObservableObject {
     private var bag = Set<AnyCancellable>()
     
     private static let weekdayOrder = ["일","월","화","수","목","금","토"]
-    
+
+    // 루틴 생성
     func addAlarm(model: AlarmModel,
-                  routineIds: [String],
-                  completion: @escaping (Bool) -> Void)
-    {
-        // 요일 문자열 → Int 배열
+                  completion: @escaping (Bool) -> Void) {
+        
         let repeatDays = model.weekdays
             .compactMap { Self.weekdayOrder.firstIndex(of: $0) }
             .sorted()
-
+        
+        let routines = model.routines.enumerated().map { idx, item in
+            AlarmCreateRequest.Routine(
+                routine_id: item.id,
+                order: idx + 1
+            )
+        }
+        
         let request = AlarmCreateRequest(
             time: Self.hhmm(model.alarmTime),
-            status: model.isOn ? "ON" : "OFF",
+            vibration_on: model.isVibrationOn,
             sound_volume: model.volume,
+            status: model.isOn ? "Active" : "Inactive",
             repeat_days: repeatDays,
-            routines: routineIds.enumerated().map { idx, id in
-                .init(routine_id: id, order: idx)
-            }
+            routines: routines
         )
         
         service.createAlarm(request)
@@ -43,12 +48,14 @@ final class AlarmViewModel: ObservableObject {
                     completion(false)
                 }
             }, receiveValue: { [weak self] response in
-                var new = model
-                new.alarmId = response.alarm_id
-                self?.alarms.append(new)
+                var saved = model
+                saved.alarmId = response.alarm_id
+                self?.alarms.append(saved)
                 
-                SnackBarPresenter.show(text: "알람이 성공적으로 생성되었습니다.",
-                                       isSuccess: true)
+                SnackBarPresenter.show(
+                    text: "알람이 성공적으로 생성되었습니다.",
+                    isSuccess: true
+                )
                 completion(true)
             })
             .store(in: &bag)

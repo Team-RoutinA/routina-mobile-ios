@@ -1,5 +1,5 @@
 //
-//  AlarmListView.swift
+//  AlarmView.swift
 //  routina-mobile-ios
 //
 //  Created by 이슬기 on 5/25/25.
@@ -58,13 +58,11 @@ struct AlarmView: View {
                     // 알람 카드 리스트
                     ForEach(Array(alarmViewModel.alarms.enumerated()), id: \.0) { (index, alarm) in
                         AlarmCard(
-                            timeText: alarm.timeText,
-                            weekdays: Array(alarm.weekdays),
-                            routines: alarm.routines,
-                            isOn: $alarmViewModel.alarms[index].isOn,
-                            onDelete: {
-                                alarmViewModel.alarms.remove(at: index)
-                            }
+                            timeText : alarm.timeText,
+                            weekdays : Array(alarm.weekdays),
+                            routines : alarm.routines,
+                            isOn     : $alarmViewModel.alarms[index].isOn,
+                            onDelete : { alarmViewModel.alarms.remove(at: index) }
                         )
                         .padding(.horizontal, 48)
                     }
@@ -82,11 +80,7 @@ struct AlarmView: View {
         .onReceive(NotificationCenter.default.publisher(for: .alarmCreated)) { _ in
             // 알람이 생성되었다는 신호를 받으면 CreateAlarmView 닫기
             isPresentingCreateView = false
-            print("알람 생성 완료 - CreateAlarmView 닫힘")
+            print("알람 생성 완료")
         }
     }
-}
-
-#Preview {
-    AlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
 }

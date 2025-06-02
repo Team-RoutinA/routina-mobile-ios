@@ -60,18 +60,21 @@ class RoutineViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     // 필요한 형태로 변환
                     self.routines = responses.map { response in
-                        RoutineModel(
+                        let backendType = response.type
+                        let routineType: RoutineType? =
+                            backendType == "duration" ? .time : RoutineType(rawValue: backendType)
+
+                        // 아이콘도 동일 규칙 적용
+                        let iconName = routineType?.tagImageName ?? "simple"
+
+                        return RoutineModel(
                             title: response.title,
-                            icon: response.type,
-                            routineType: RoutineType(rawValue: response.type),
+                            icon: iconName,
+                            routineType: routineType,
                             goalCount: response.goal_value,
                             limitMinutes: {
-                                let parts = response.deadline_time.split(separator: ":")
-                                if parts.count == 2,
-                                   let hour = Int(parts[0]), let minute = Int(parts[1]) {
-                                    return hour * 60 + minute
-                                }
-                                return nil
+                                let p = response.deadline_time.split(separator: ":")
+                                return (p.count == 2) ? (Int(p[0])! * 60 + Int(p[1])!) : nil
                             }(),
                             successStandard: response.success_note,
                             routineId: response.routine_id
