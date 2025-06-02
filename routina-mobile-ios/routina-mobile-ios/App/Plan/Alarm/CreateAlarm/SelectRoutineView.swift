@@ -78,6 +78,11 @@ struct SelectRoutineView: View {
                     }
                 }
             }
+            .onAppear {
+                if routineViewModel.routines.isEmpty {
+                    routineViewModel.fetchRoutines()
+                }
+            }
         }
     }
     
@@ -254,20 +259,23 @@ struct SelectRoutineView: View {
             text: "생성 완료",
             enable: !selectedRoutines.isEmpty,
             action: {
-                let newAlarm = AlarmModel(
-                    alarmTime: alarmModel.alarmTime,
-                    weekdays: alarmModel.weekdays,
-                    routines: selectedRoutines.map { ($0.title, $0.routineType?.displayName) },
-                    isOn: alarmModel.isOn,
-                    volume: alarmModel.volume,
-                    isVibrationOn: alarmModel.isVibrationOn
+                let draft = AlarmModel(
+                    alarmTime : alarmModel.alarmTime,
+                    weekdays  : alarmModel.weekdays,
+                    routines  : selectedRoutines.map {
+                        (id: $0.routineId ?? "",
+                         title: $0.title,
+                         type:  $0.routineType?.displayName)
+                    },
+                    isOn            : alarmModel.isOn,
+                    volume          : alarmModel.volume,
+                    isVibrationOn   : alarmModel.isVibrationOn
                 )
-                alarmViewModel.alarms.append(newAlarm)
-                
-                SnackBarPresenter.show(text: "알람이 성공적으로 생성되었습니다.", isSuccess: true)
-
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    NotificationCenter.default.post(name: .alarmCreated, object: nil)
+                alarmViewModel.addAlarm(model: draft) { success in
+                    if success {
+                        NotificationCenter.default.post(name: .alarmCreated, object: nil)
+                        dismiss()
+                    }
                 }
             }
         )
@@ -276,20 +284,20 @@ struct SelectRoutineView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        SelectRoutineView(
-            alarmViewModel: AlarmViewModel(),
-            routineViewModel: RoutineViewModel(),
-            alarmModel: AlarmModel(
-                alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
-                weekdays: Set(["월", "화", "수"]),
-                routines: [],
-                isOn: true,
-                volume: 0.5,
-                isVibrationOn: true
-            )
-        )
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        SelectRoutineView(
+//            alarmViewModel: AlarmViewModel(),
+//            routineViewModel: RoutineViewModel(),
+//            alarmModel: AlarmModel(
+//                alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
+//                weekdays: Set(["월", "화", "수"]),
+//                routines: [],
+//                isOn: true,
+//                volume: 0.5,
+//                isVibrationOn: true
+//            )
+//        )
+//    }
+//}
 

@@ -252,8 +252,8 @@ struct CreateAlarmView: View {
     }
 }
 
-#Preview {
-    NavigationStack {
-        CreateAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
-    }
-}
+//#Preview {
+//    NavigationStack {
+//        CreateAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
+//    }
+//}

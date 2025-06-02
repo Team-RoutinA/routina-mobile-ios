@@ -8,9 +8,10 @@
 import Foundation
 
 struct AlarmModel {
+    var alarmId: String = ""
     var alarmTime: Date
     var weekdays: Set<String>
-    var routines: [(title: String, type: String?)]
+    var routines: [AlarmRoutineInfo]
     var isOn: Bool
     var volume: Double
     var isVibrationOn: Bool
