@@ -283,21 +283,3 @@ struct SelectRoutineView: View {
         .padding(.bottom, 16)
     }
 }
-
-//#Preview {
-//    NavigationStack {
-//        SelectRoutineView(
-//            alarmViewModel: AlarmViewModel(),
-//            routineViewModel: RoutineViewModel(),
-//            alarmModel: AlarmModel(
-//                alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
-//                weekdays: Set(["월", "화", "수"]),
-//                routines: [],
-//                isOn: true,
-//                volume: 0.5,
-//                isVibrationOn: true
-//            )
-//        )
-//    }
-//}
-

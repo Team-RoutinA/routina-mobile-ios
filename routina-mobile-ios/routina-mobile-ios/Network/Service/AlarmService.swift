@@ -54,7 +54,7 @@ final class AlarmService {
         
         return provider.requestPublisher(.updateAlarmStatus(id: id, status: status))
             .map { response in
-                print("✅ 알람 상태 업데이트 성공: \(response.statusCode)")
+                print("알람 상태 업데이트 성공: \(response.statusCode)")
                 return ()
             }
             .mapError { error in

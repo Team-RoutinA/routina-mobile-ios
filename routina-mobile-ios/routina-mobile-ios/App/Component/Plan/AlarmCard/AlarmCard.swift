@@ -87,7 +87,7 @@ struct AlarmCard: View {
                 .foregroundColor(collapsed ? .gray9 : .black)
 
             if let type = routine.type {
-                Text(type)                            // 텍스트 칩
+                Text(type)
                     .font(.routina(.caption3))
                     .foregroundColor(.white)
                     .padding(.horizontal, 6)
@@ -141,19 +141,3 @@ struct StatefulPreviewWrapper<Value, Content: View>: View {
     }
     var body: some View { content($value) }
 }
-
-//#Preview {
-//    StatefulPreviewWrapper(true) { $isOn in
-//        AlarmCard(
-//            timeText: alarm.timeText,
-//            weekdays: Array(alarm.weekdays),
-//            routines: alarm.routines,   // ✔ 그대로
-//            isOn: $alarmViewModel.alarms[index].isOn,
-//            onDelete: {
-//                alarmViewModel.alarms.remove(at: index)
-//            }
-//        )
-//        .padding()
-//        .background(Color.gray.opacity(0.1))
-//    }
-//}

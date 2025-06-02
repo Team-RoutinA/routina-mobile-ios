@@ -203,7 +203,6 @@ final class AlarmViewModel: ObservableObject {
             return
         }
         
-        print("🔄 토글 시작: \(id) - \(originalState) -> \(isOn)")
         toggling.insert(id)
 
         // 즉시 UI 업데이트
@@ -214,22 +213,19 @@ final class AlarmViewModel: ObservableObject {
                 guard let self else { return }
                 
                 defer {
-                    // ⚠️ 반드시 완료 후 플래그 해제
                     self.toggling.remove(id)
-                    print("✅ 토글 완료: \(id)")
                 }
 
                 if case .failure(let error) = comp {
                     print("❌ 토글 실패: \(error)")
                     
-                    // ❌ 실패 시 원래 상태로 롤백
                     if index < self.alarms.count {
                         self.alarms[index].isOn = originalState
                     }
                     
                     SnackBarPresenter.show(text: "알람 상태 변경 실패", isSuccess: false)
                 } else {
-                    print("✅ 토글 성공: \(id)")
+                    print("토글 성공: \(id)")
                     SnackBarPresenter.show(text: "알람 상태가 변경되었습니다.", isSuccess: true)
                 }
             }, receiveValue: { _ in
