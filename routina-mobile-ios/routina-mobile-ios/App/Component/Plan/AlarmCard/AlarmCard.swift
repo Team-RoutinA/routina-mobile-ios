@@ -15,6 +15,7 @@ struct AlarmCard: View {
     let routines: [AlarmRoutineInfo]
     @Binding var isOn: Bool
     let onDelete: () -> Void
+    let onToggle: (Bool) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -36,9 +37,15 @@ struct AlarmCard: View {
 
                 Spacer()
 
-                Toggle("", isOn: $isOn)
-                    .labelsHidden()
-                    .toggleStyle(CustomToggle()) // 커스텀 토글 적용
+                Toggle("", isOn: Binding(
+                    get: { isOn },
+                    set: { newValue in
+                        print("🎯 토글 클릭: \(isOn) -> \(newValue)")
+                        onToggle(newValue)
+                    }
+                ))
+                .labelsHidden()
+                .toggleStyle(CustomToggle())
             }
 
             // 루틴 표시 영역

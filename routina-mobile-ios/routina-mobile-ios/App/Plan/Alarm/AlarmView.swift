@@ -71,7 +71,10 @@ struct AlarmView: View {
                             weekdays : alarm.orderedWeekdays,
                             routines : alarm.routines,
                             isOn     : $alarmViewModel.alarms[index].isOn,
-                            onDelete : { alarmViewModel.deleteAlarm(at: index) }
+                            onDelete : { alarmViewModel.deleteAlarm(at: index) },
+                            onToggle : { newValue in
+                                alarmViewModel.toggleAlarm(at: index, to: newValue)
+                            }
                         )
                         .padding(.horizontal, 48)
                     }

@@ -18,6 +18,8 @@ final class AlarmViewModel: ObservableObject {
     private var bag = Set<AnyCancellable>()
     
     static let weekdayOrder = ["일","월","화","수","목","금","토"]
+    
+    private var toggling = Set<String>()
 
     // 알람 생성
     func addAlarm(model: AlarmModel,
@@ -178,6 +180,60 @@ final class AlarmViewModel: ObservableObject {
             }, receiveValue: { [weak self] in
                 self?.alarms.remove(at: index)
                 SnackBarPresenter.show(text: "알람이 삭제되었습니다.", isSuccess: true)
+            })
+            .store(in: &bag)
+    }
+    
+    // 알람 활성화/비활성화 상태 변경
+    func toggleAlarm(at index: Int, to isOn: Bool) {
+        guard index < alarms.count else { return }
+        
+        let id = alarms[index].alarmId
+        let originalState = alarms[index].isOn
+
+        // 이미 진행 중이면 무시 (재귀 차단)
+        if toggling.contains(id) {
+            print("⚠️ 이미 토글 진행 중: \(id)")
+            return
+        }
+        
+        // 같은 상태면 무시
+        if originalState == isOn {
+            print("⚠️ 같은 상태로 토글 시도: \(originalState) -> \(isOn)")
+            return
+        }
+        
+        print("🔄 토글 시작: \(id) - \(originalState) -> \(isOn)")
+        toggling.insert(id)
+
+        // 즉시 UI 업데이트
+        alarms[index].isOn = isOn
+        
+        service.updateAlarmStatus(id: id, isOn: isOn)
+            .sink(receiveCompletion: { [weak self] comp in
+                guard let self else { return }
+                
+                defer {
+                    // ⚠️ 반드시 완료 후 플래그 해제
+                    self.toggling.remove(id)
+                    print("✅ 토글 완료: \(id)")
+                }
+
+                if case .failure(let error) = comp {
+                    print("❌ 토글 실패: \(error)")
+                    
+                    // ❌ 실패 시 원래 상태로 롤백
+                    if index < self.alarms.count {
+                        self.alarms[index].isOn = originalState
+                    }
+                    
+                    SnackBarPresenter.show(text: "알람 상태 변경 실패", isSuccess: false)
+                } else {
+                    print("✅ 토글 성공: \(id)")
+                    SnackBarPresenter.show(text: "알람 상태가 변경되었습니다.", isSuccess: true)
+                }
+            }, receiveValue: { _ in
+                // 성공 시에는 이미 UI가 업데이트되어 있음
             })
             .store(in: &bag)
     }

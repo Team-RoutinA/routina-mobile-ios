@@ -50,12 +50,16 @@ final class AlarmService {
     
     // 알람 활성화/비활성화 상태 업데이트
     func updateAlarmStatus(id: String, isOn: Bool) -> AnyPublisher<Void, Error> {
-        let newStatus = isOn ? "Active" : "Inactive"
-        return provider.requestPublisher(.updateAlarmStatus(id: id, status: newStatus))
-            .filterSuccessfulStatusCodes()
-            .map { _ in () }
-            .mapError { $0 as Error }
-            .receive(on: DispatchQueue.main)
+        let status = isOn ? "Active" : "Inactive"
+        
+        return provider.requestPublisher(.updateAlarmStatus(id: id, status: status))
+            .map { response in
+                print("✅ 알람 상태 업데이트 성공: \(response.statusCode)")
+                return ()
+            }
+            .mapError { error in
+                print("❌ 알람 상태 업데이트 실패: \(error)")
+                return error as Error
+            }
             .eraseToAnyPublisher()
-    }
-}
+    }}
