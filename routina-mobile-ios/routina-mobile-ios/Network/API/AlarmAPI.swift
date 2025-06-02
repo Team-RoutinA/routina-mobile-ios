@@ -11,6 +11,7 @@ import Moya
 enum AlarmAPI {
     case createAlarm(request: CreateAlarmRequest)
     case getAlarms
+    case deleteAlarm(id: String)
 }
 
 extension AlarmAPI: BaseAPI {
@@ -18,6 +19,8 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm, .getAlarms:
             return "/alarms"
+        case .deleteAlarm(let id):
+            return "/alarms/\(id)"
         }
     }
     
@@ -27,6 +30,8 @@ extension AlarmAPI: BaseAPI {
             return .post
         case .getAlarms:
             return .get
+        case .deleteAlarm:
+            return .delete
         }
     }
     
@@ -34,7 +39,7 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm(let request):
             return .requestJSONEncodable(request)
-        case .getAlarms:
+        case .getAlarms, .deleteAlarm:
             return .requestPlain
         }
     }

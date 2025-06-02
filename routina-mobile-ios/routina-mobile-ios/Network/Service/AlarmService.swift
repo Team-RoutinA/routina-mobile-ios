@@ -37,4 +37,13 @@ final class AlarmService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
-}
+    
+    // 알람 삭제
+    func deleteAlarm(_ id: String) -> AnyPublisher<Void, Error> {
+        provider.requestPublisher(.deleteAlarm(id: id))
+            .filterSuccessfulStatusCodes()
+            .map { _ in () }
+            .mapError { $0 as Error }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }}
