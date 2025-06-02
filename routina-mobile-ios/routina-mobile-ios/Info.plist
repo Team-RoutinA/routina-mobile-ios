@@ -15,7 +15,7 @@
 		<string>Pretendard-Thin.otf</string>
 	</array>
     <key>API_BASE_URL</key>
-    <string>http://172.25.82.19:8000</string>
+    <string>http://:8000</string>
     <key>NSAppTransportSecurity</key>
     <dict>
         <key>NSAllowsArbitraryLoads</key>

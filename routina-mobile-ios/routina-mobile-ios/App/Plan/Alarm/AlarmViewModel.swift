@@ -26,13 +26,13 @@ final class AlarmViewModel: ObservableObject {
             .sorted()
         
         let routines = model.routines.enumerated().map { idx, item in
-            AlarmCreateRequest.Routine(
+            CreateAlarmRequest.Routine(
                 routine_id: item.id,
                 order: idx + 1
             )
         }
         
-        let request = AlarmCreateRequest(
+        let request = CreateAlarmRequest(
             time: Self.hhmm(model.alarmTime),
             vibration_on: model.isVibrationOn,
             sound_volume: model.volume,
