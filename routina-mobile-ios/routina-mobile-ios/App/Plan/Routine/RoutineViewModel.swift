@@ -105,8 +105,32 @@ class RoutineViewModel: ObservableObject {
     }
 
     // 루틴 수정하기
-    func updateRoutine(at index: Int, with routine: RoutineModel) {
-        guard index >= 0 && index < routines.count else { return }
-        routines[index] = routine
+    func updateRoutine(at index: Int, with new: RoutineModel) {
+        guard index < routines.count,
+              let id = routines[index].routineId
+        else { return }
+
+        let isTime = new.routineType == .time
+
+        service.updateRoutine(
+            id: id,
+            title: new.title,
+            type: isTime ? "duration" : (new.routineType?.rawValue ?? "simple"),
+            goalValue: isTime ? nil : new.goalCount,
+            durationSeconds: isTime ? (new.goalCount ?? 0) * 60 : nil,
+            deadlineTime: String(
+                format: "%02d:%02d",
+                (new.limitMinutes ?? 0) / 60,
+                (new.limitMinutes ?? 0) % 60
+            ),
+            successNote: new.successStandard
+        )
+        .sink(receiveCompletion: { c in
+            if case .failure(let e) = c { print("❌ 수정 실패", e) }
+        }, receiveValue: { _ in
+            self.routines[index] = new
+            print("수정 완료")
+        })
+        .store(in: &cancellables)
     }
 }
