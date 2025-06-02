@@ -26,3 +26,13 @@ struct CreateRoutineResponse: Decodable {
     let success_note: String?
     let routine_id: String
 }
+
+struct GetRoutinesResponse: Decodable {
+    let title: String
+    let type: String
+    let goal_value: Int?
+    let duration_seconds: Int?
+    let deadline_time: String
+    let success_note: String?
+    let routine_id: String
+}

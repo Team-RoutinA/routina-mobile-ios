@@ -13,7 +13,6 @@ class RoutineService {
     private var provider = MoyaProvider<RoutineAPI>()
     
     func createRoutine(
-        userId: String,
         title: String,
         type: String,
         goalValue: Int?,
@@ -47,7 +46,6 @@ class RoutineService {
                 guard (200..<300).contains(response.statusCode) else {
                     print("[RoutineService] createRoutine status: \(response.statusCode)")
                     
-                    // ✅ 에러 응답을 더 자세히 분석
                     if let errorBody = String(data: response.data, encoding: .utf8) {
                         print("❌ 서버 에러 상세 내용: '\(errorBody)'")
                         print("❌ 에러 데이터 길이: \(response.data.count) bytes")
@@ -58,7 +56,6 @@ class RoutineService {
                     
                     throw MoyaError.statusCode(response)
                 }
-                // ✅ 성공 응답도 확인
                 if let body = String(data: response.data, encoding: .utf8) {
                     print("📥 서버 성공 응답: \(body)")
                 }
@@ -66,6 +63,22 @@ class RoutineService {
                 return response.data
             }
             .decode(type: CreateRoutineResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
+    func fetchRoutines() -> AnyPublisher<[GetRoutinesResponse], Error> {
+        return provider.requestPublisher(.getRoutines)
+            .tryMap { response in
+                guard (200..<300).contains(response.statusCode) else {
+                    if let errorBody = String(data: response.data, encoding: .utf8) {
+                        print("❌ 루틴 리스트 에러: \(errorBody)")
+                    }
+                    throw MoyaError.statusCode(response)
+                }
+                return response.data
+            }
+            .decode(type: [GetRoutinesResponse].self, decoder: JSONDecoder())
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }

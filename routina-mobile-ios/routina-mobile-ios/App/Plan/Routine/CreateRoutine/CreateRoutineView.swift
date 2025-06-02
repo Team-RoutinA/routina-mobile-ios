@@ -397,9 +397,3 @@ struct CreateRoutineView: View {
         .padding(.bottom, 20)
     }
 }
-
-#Preview {
-    NavigationStack {
-        CreateRoutineView(viewModel: RoutineViewModel())
-    }
-}
