@@ -13,6 +13,7 @@ class RoutineViewModel: ObservableObject {
     private let service = RoutineService()
     private var cancellables = Set<AnyCancellable>()
 
+    // 루린 생성하기
     func addRoutine(_ routine: RoutineModel, completion: @escaping (Bool) -> Void) {
         guard let userId = UserDefaults.standard.string(forKey: "userId") else {
             print("userId 없음")
@@ -36,11 +37,11 @@ class RoutineViewModel: ObservableObject {
                 print("❌ 루틴 생성 실패: \(error)")
                 completion(false)
             } else {
-                print("✅ 루틴 생성 완료 - completion 정상")
+                print("루틴 생성 완료")
             }
         }, receiveValue: { response in
             DispatchQueue.main.async {
-                print("📦 루틴 추가됨: \(routine.title)")
+                print("루틴 추가됨: \(routine.title)")
                 self.routines.append(routine)
                 completion(true)
             }
@@ -48,6 +49,7 @@ class RoutineViewModel: ObservableObject {
         .store(in: &cancellables)
     }
     
+    // 루틴 리스트 불러오기
     func fetchRoutines() {
         service.fetchRoutines()
             .sink(receiveCompletion: { completion in
@@ -75,19 +77,36 @@ class RoutineViewModel: ObservableObject {
                             routineId: response.routine_id
                         )
                     }
-                    print("✅ 루틴 목록 갱신 완료: \(self.routines.count)개")
+                    print("루틴 목록 갱신 완료: \(self.routines.count)개")
                 }
             })
             .store(in: &cancellables)
     }
     
+    // 루틴 삭제하기
+    func deleteRoutine(at index: Int) {
+        guard index >= 0 && index < routines.count else { return }
+        
+        guard let id = routines[index].routineId else {
+            print("❌ 서버 routineId 가 없어 삭제 불가")
+            return
+        }
+        
+        service.deleteRoutine(id: id)
+            .sink(receiveCompletion: { completion in
+                if case .failure(let error) = completion {
+                    print("❌ 루틴 삭제 실패:", error)
+                }
+            }, receiveValue: { _ in
+                self.routines.remove(at: index)
+                print("루틴 삭제 완료")
+            })
+            .store(in: &cancellables)
+    }
+
+    // 루틴 수정하기
     func updateRoutine(at index: Int, with routine: RoutineModel) {
         guard index >= 0 && index < routines.count else { return }
         routines[index] = routine
-    }
-    
-    func deleteRoutine(at index: Int) {
-        guard index >= 0 && index < routines.count else { return }
-        routines.remove(at: index)
     }
 }
