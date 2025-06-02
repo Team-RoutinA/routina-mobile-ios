@@ -97,4 +97,36 @@ class RoutineService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
+    // 루틴 수정하기
+    func updateRoutine(
+        id: String,
+        title: String,
+        type: String,
+        goalValue: Int?,
+        durationSeconds: Int?,
+        deadlineTime: String,
+        successNote: String?
+    ) -> AnyPublisher<CreateRoutineResponse, Error> {
+
+        let entity = CreateRoutineRequest(
+            title: title,
+            type: type,
+            goal_value: goalValue,
+            duration_seconds: durationSeconds,
+            deadline_time: deadlineTime,
+            success_note: successNote
+        )
+
+        return provider.requestPublisher(.updateRoutine(id: id, request: entity))
+            .tryMap { response -> Data in
+                guard (200..<300).contains(response.statusCode) else {
+                    throw MoyaError.statusCode(response)
+                }
+                return response.data
+            }
+            .decode(type: CreateRoutineResponse.self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 }
