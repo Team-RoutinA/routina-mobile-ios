@@ -10,11 +10,20 @@ import Foundation
 struct AlarmCreateRequest: Encodable {
     let time: String
     let status: String
-    let sound_volum: Double
+    let sound_volume: Double
     let repeat_days: [Int]?
-    struct Routine: Encodable {
+    struct Routine: Codable {
         let routine_id: String
         let order: Int
     }
     let routines: [Routine]
+}
+
+struct AlarmCreateResponse: Decodable {
+    let alarm_id: String
+    let time: String
+    let status: String
+    let sound_volume: Double
+    let repeat_days: [Int]?
+    let routines: [AlarmCreateRequest.Routine]
 }
