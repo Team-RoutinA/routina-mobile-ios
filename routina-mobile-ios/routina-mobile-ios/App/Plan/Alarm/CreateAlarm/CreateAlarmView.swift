@@ -251,9 +251,3 @@ struct CreateAlarmView: View {
         .padding(.bottom, 20)
     }
 }
-
-//#Preview {
-//    NavigationStack {
-//        CreateAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
-//    }
-//}

@@ -15,6 +15,7 @@ struct AlarmCard: View {
     let routines: [AlarmRoutineInfo]
     @Binding var isOn: Bool
     let onDelete: () -> Void
+    let onToggle: (Bool) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -36,9 +37,15 @@ struct AlarmCard: View {
 
                 Spacer()
 
-                Toggle("", isOn: $isOn)
-                    .labelsHidden()
-                    .toggleStyle(CustomToggle()) // 커스텀 토글 적용
+                Toggle("", isOn: Binding(
+                    get: { isOn },
+                    set: { newValue in
+                        print("🎯 토글 클릭: \(isOn) -> \(newValue)")
+                        onToggle(newValue)
+                    }
+                ))
+                .labelsHidden()
+                .toggleStyle(CustomToggle())
             }
 
             // 루틴 표시 영역
@@ -80,7 +87,7 @@ struct AlarmCard: View {
                 .foregroundColor(collapsed ? .gray9 : .black)
 
             if let type = routine.type {
-                Text(type)                            // 텍스트 칩
+                Text(type)
                     .font(.routina(.caption3))
                     .foregroundColor(.white)
                     .padding(.horizontal, 6)
@@ -134,19 +141,3 @@ struct StatefulPreviewWrapper<Value, Content: View>: View {
     }
     var body: some View { content($value) }
 }
-
-//#Preview {
-//    StatefulPreviewWrapper(true) { $isOn in
-//        AlarmCard(
-//            timeText: alarm.timeText,
-//            weekdays: Array(alarm.weekdays),
-//            routines: alarm.routines,   // ✔ 그대로
-//            isOn: $alarmViewModel.alarms[index].isOn,
-//            onDelete: {
-//                alarmViewModel.alarms.remove(at: index)
-//            }
-//        )
-//        .padding()
-//        .background(Color.gray.opacity(0.1))
-//    }
-//}

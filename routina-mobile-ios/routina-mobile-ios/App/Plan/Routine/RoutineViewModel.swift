@@ -91,7 +91,7 @@ class RoutineViewModel: ObservableObject {
         guard index >= 0 && index < routines.count else { return }
         
         guard let id = routines[index].routineId else {
-            print("❌ 서버 routineId 가 없어 삭제 불가")
+            print("❌ 서버 routineId가 없어 삭제 불가")
             return
         }
         
