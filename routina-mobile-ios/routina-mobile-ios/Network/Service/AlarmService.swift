@@ -14,10 +14,10 @@ final class AlarmService {
     private let provider = MoyaProvider<AlarmAPI>()
 
     /// 알람 생성
-    func createAlarm(_ req: AlarmCreateRequest)
+    func createAlarm(_ request: AlarmCreateRequest)
         -> AnyPublisher<AlarmCreateResponse, Error> {
 
-        provider.requestPublisher(.createAlarm(request: req))
+        provider.requestPublisher(.createAlarm(request: request))
             .filterSuccessfulStatusCodes()
             .map(\.data)
             .decode(type: AlarmCreateResponse.self, decoder: JSONDecoder())
