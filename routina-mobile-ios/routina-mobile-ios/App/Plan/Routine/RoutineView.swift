@@ -86,9 +86,8 @@ struct RoutineView: View {
                     }
             }
         }
-//        .onAppear {
-//            UserDefaults.standard.removeObject(forKey: "userId")
-//            print("✅ 로그아웃 완료: userId 삭제됨")
-//        }
+        .onAppear {
+            viewModel.fetchRoutines()
+        }
     }
 }

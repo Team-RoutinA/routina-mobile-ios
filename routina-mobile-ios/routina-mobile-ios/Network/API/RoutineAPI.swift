@@ -10,12 +10,13 @@ import Moya
 
 enum RoutineAPI {
     case createRoutine(request: CreateRoutineRequest)
+    case getRoutines
 }
 
 extension RoutineAPI: BaseAPI {
     var path: String {
         switch self {
-        case .createRoutine:
+        case .createRoutine, .getRoutines:
             return "/routines"
         }
     }
@@ -24,6 +25,8 @@ extension RoutineAPI: BaseAPI {
         switch self {
         case .createRoutine:
             return .post
+        case .getRoutines:
+            return .get
         }
     }
     
@@ -31,6 +34,8 @@ extension RoutineAPI: BaseAPI {
         switch self {
         case .createRoutine(let request):
             return .requestJSONEncodable(request)
+        case .getRoutines:
+            return .requestPlain
         }
     }
 }
