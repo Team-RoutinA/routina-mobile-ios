@@ -16,8 +16,8 @@ final class AlarmService {
     
     // 알람 생성
     func createAlarm(_ request: CreateAlarmRequest)
-        -> AnyPublisher<CreateAlarmResponse, Error> {
-
+    -> AnyPublisher<CreateAlarmResponse, Error> {
+        
         provider.requestPublisher(.createAlarm(request: request))
             .filterSuccessfulStatusCodes()
             .map(\.data)
@@ -28,8 +28,8 @@ final class AlarmService {
     
     // 알람 조회
     func fetchAlarms()
-        -> AnyPublisher<[GetAlarmResponse], Error> {
-
+    -> AnyPublisher<[GetAlarmResponse], Error> {
+        
         provider.requestPublisher(.getAlarms)
             .filterSuccessfulStatusCodes()
             .map(\.data)
@@ -46,4 +46,16 @@ final class AlarmService {
             .mapError { $0 as Error }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
-    }}
+    }
+    
+    // 알람 활성화/비활성화 상태 업데이트
+    func updateAlarmStatus(id: String, isOn: Bool) -> AnyPublisher<Void, Error> {
+        let newStatus = isOn ? "Active" : "Inactive"
+        return provider.requestPublisher(.updateAlarmStatus(id: id, status: newStatus))
+            .filterSuccessfulStatusCodes()
+            .map { _ in () }
+            .mapError { $0 as Error }
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+}
