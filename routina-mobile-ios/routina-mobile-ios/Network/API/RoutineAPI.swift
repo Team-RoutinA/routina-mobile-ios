@@ -11,6 +11,7 @@ import Moya
 enum RoutineAPI {
     case createRoutine(request: CreateRoutineRequest)
     case getRoutines
+    case deleteRoutine(id: String) // routineId
 }
 
 extension RoutineAPI: BaseAPI {
@@ -18,6 +19,8 @@ extension RoutineAPI: BaseAPI {
         switch self {
         case .createRoutine, .getRoutines:
             return "/routines"
+        case .deleteRoutine(let id):
+            return "/routines/\(id)"
         }
     }
     
@@ -27,6 +30,8 @@ extension RoutineAPI: BaseAPI {
             return .post
         case .getRoutines:
             return .get
+        case .deleteRoutine:
+            return .delete
         }
     }
     
@@ -34,7 +39,7 @@ extension RoutineAPI: BaseAPI {
         switch self {
         case .createRoutine(let request):
             return .requestJSONEncodable(request)
-        case .getRoutines:
+        case .getRoutines, .deleteRoutine:
             return .requestPlain
         }
     }
