@@ -22,16 +22,12 @@ struct AlarmModel {
         formatter.locale = Locale(identifier: "ko_KR")
         return formatter.string(from: alarmTime)
     }
-    
-    // 요일을 정렬된 문자열로 반환하는 메서드 추가
-    var sortedWeekdaysText: String {
-        if weekdays.isEmpty {
-            return "없음"
-        }
-        
-        // 요일 순서 정의
-        let weekdayOrder = ["일", "월", "화", "수", "목", "금", "토"]
-        let sortedWeekdays = weekdayOrder.filter { weekdays.contains($0) }
-        return sortedWeekdays.joined(separator: ", ")
+}
+
+extension AlarmModel {
+    // 월 → 일 순서로 정렬된 요일 배열
+    var orderedWeekdays: [String] {
+        let order = ["월","화","수","목","금","토","일"]
+        return order.filter { weekdays.contains($0) }
     }
 }

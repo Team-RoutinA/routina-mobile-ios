@@ -9,13 +9,14 @@ import Foundation
 import Moya
 
 enum AlarmAPI {
-    case createAlarm(request: AlarmCreateRequest)
+    case createAlarm(request: CreateAlarmRequest)
+    case getAlarms
 }
 
 extension AlarmAPI: BaseAPI {
     var path: String {
         switch self {
-        case .createAlarm:
+        case .createAlarm, .getAlarms:
             return "/alarms"
         }
     }
@@ -24,6 +25,8 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm:
             return .post
+        case .getAlarms:
+            return .get
         }
     }
     
@@ -31,6 +34,8 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm(let request):
             return .requestJSONEncodable(request)
+        case .getAlarms:
+            return .requestPlain
         }
     }
 }

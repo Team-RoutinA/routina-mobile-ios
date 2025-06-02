@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct AlarmCreateRequest: Encodable {
+struct CreateAlarmRequest: Encodable {
     let time: String
     let vibration_on: Bool
     let sound_volume: Double
@@ -20,11 +20,20 @@ struct AlarmCreateRequest: Encodable {
     let routines: [Routine]
 }
 
-struct AlarmCreateResponse: Decodable {
+struct CreateAlarmResponse: Decodable {
     let alarm_id: String
     let time: String
     let status: String
     let sound_volume: Double
     let repeat_days: [Int]?
-    let routines: [AlarmCreateRequest.Routine]
+    let routines: [CreateAlarmRequest.Routine]
+}
+
+struct GetAlarmResponse: Decodable {
+    let alarm_id: String
+    let time: String
+    let status: String
+    let sound_volume: Double
+    let repeat_days: [Int]?
+    let routines: [CreateAlarmRequest.Routine]
 }
