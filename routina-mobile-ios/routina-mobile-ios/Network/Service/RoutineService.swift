@@ -12,6 +12,7 @@ import CombineMoya
 class RoutineService {
     private var provider = MoyaProvider<RoutineAPI>()
     
+    // 루틴 생성하기
     func createRoutine(
         title: String,
         type: String,
@@ -30,7 +31,7 @@ class RoutineService {
             success_note: successNote
         )
         
-        // ✅ 실제 JSON 형태로 출력하기
+        // 실제 JSON 형태로 출력하기
         print("📤 루틴 생성 바디:")
         do {
             let jsonData = try JSONEncoder().encode(entity)
@@ -67,6 +68,7 @@ class RoutineService {
             .eraseToAnyPublisher()
     }
     
+    // 루틴 리스트 불러오기
     func fetchRoutines() -> AnyPublisher<[GetRoutinesResponse], Error> {
         return provider.requestPublisher(.getRoutines)
             .tryMap { response in
@@ -79,6 +81,19 @@ class RoutineService {
                 return response.data
             }
             .decode(type: [GetRoutinesResponse].self, decoder: JSONDecoder())
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
+    // 루틴 삭제하기
+    func deleteRoutine(id: String) -> AnyPublisher<Void, Error> {
+        provider.requestPublisher(.deleteRoutine(id: id))
+            .tryMap { response in
+                guard (200..<300).contains(response.statusCode) else {
+                    throw MoyaError.statusCode(response)
+                }
+                return ()
+            }
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
