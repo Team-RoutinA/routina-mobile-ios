@@ -236,5 +236,22 @@ final class AlarmViewModel: ObservableObject {
             })
             .store(in: &bag)
     }
+    
+    // 활성화 & 오늘요일 & 시간서순으로 알람들 필터링
+    func filteredAlarms() -> [AlarmModel] {
+        let now = Date()
+        let todayWeekdayIndex = Calendar.current.component(.weekday, from: now) - 1
+        let todayKor = AlarmViewModel.weekdayOrder[todayWeekdayIndex]
+
+        return alarms.filter { alarm in
+            guard let alarmTime = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: alarm.alarmTime), minute: Calendar.current.component(.minute, from: alarm.alarmTime), second: 0, of: Date()) else { return false }
+
+            let nowTime = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: now), minute: Calendar.current.component(.minute, from: now), second: 0, of: Date()) ?? now
+
+            return alarm.isOn &&
+                   alarm.weekdays.contains(todayKor) &&
+                   alarmTime > nowTime
+        }
+    }
 }
 

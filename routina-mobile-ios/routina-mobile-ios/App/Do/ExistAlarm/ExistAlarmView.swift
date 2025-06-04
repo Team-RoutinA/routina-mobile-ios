@@ -18,7 +18,7 @@ struct ExistAlarmView: View {
                     titleSection
                     Spacer()
                 }
-                let alarmModels = alarmViewModel.alarms
+                let alarmModels = alarmViewModel.filteredAlarms()
                 ForEach(alarmModels.indices, id: \.self) { index in
                     alarmSection(for: alarmModels[index])
                     routineSection(for: alarmModels[index].routines)

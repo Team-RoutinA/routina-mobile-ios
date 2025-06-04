@@ -23,7 +23,9 @@ struct DoView: View {
                     
                     Spacer().frame(height: 28)
                     
-                    if !alarmViewModel.alarms.isEmpty {
+                    let filteredAlarms = alarmViewModel.filteredAlarms()
+                    
+                    if !filteredAlarms.isEmpty {
                         ExistAlarmView(alarmViewModel: alarmViewModel, routineViewModel: routineViewModel)
                     } else {
                         DoNoAlarmView(alarmViewModel: alarmViewModel, routineViewModel: routineViewModel)
