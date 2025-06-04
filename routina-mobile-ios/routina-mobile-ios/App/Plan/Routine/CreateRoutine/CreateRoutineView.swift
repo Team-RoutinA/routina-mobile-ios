@@ -360,13 +360,24 @@ struct CreateRoutineView: View {
                     )
                     
                     if isEditMode {
-                        // 수정 모드
                         if let index = editingIndex {
                             viewModel.updateRoutine(at: index, with: routine)
                         }
                     } else {
-                        // 생성 모드
-                        viewModel.addRoutine(routine)
+                        viewModel.addRoutine(routine) { success in
+                            isSuccessSnackBar = success
+                            showSnackBar = true
+
+                            if success {
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                    dismiss()
+                                }
+                            }
+
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                                showSnackBar = false
+                            }
+                        }
                     }
                     
                     isSuccessSnackBar = true
@@ -384,11 +395,5 @@ struct CreateRoutineView: View {
             }
         )
         .padding(.bottom, 20)
-    }
-}
-
-#Preview {
-    NavigationStack {
-        CreateRoutineView(viewModel: RoutineViewModel())
     }
 }

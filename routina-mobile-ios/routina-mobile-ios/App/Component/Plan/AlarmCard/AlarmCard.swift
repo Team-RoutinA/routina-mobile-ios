@@ -7,12 +7,15 @@
 
 import SwiftUI
 
+typealias AlarmRoutineInfo = (id: String, title: String, type: String?)
+
 struct AlarmCard: View {
     let timeText: String
     let weekdays: [String]
-    let routines: [(title: String, type: String?)] // 루틴 제목 + 태그 타입
+    let routines: [AlarmRoutineInfo]
     @Binding var isOn: Bool
     let onDelete: () -> Void
+    let onToggle: (Bool) -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -34,49 +37,26 @@ struct AlarmCard: View {
 
                 Spacer()
 
-                Toggle("", isOn: $isOn)
-                    .labelsHidden()
-                    .toggleStyle(CustomToggle()) // 커스텀 토글 적용
+                Toggle("", isOn: Binding(
+                    get: { isOn },
+                    set: { newValue in
+                        print("🎯 토글 클릭: \(isOn) -> \(newValue)")
+                        onToggle(newValue)
+                    }
+                ))
+                .labelsHidden()
+                .toggleStyle(CustomToggle())
             }
 
             // 루틴 표시 영역
             if isOn {
-                // 전체 루틴 출력
-                ForEach(routines.indices, id: \.self) { i in
-                    HStack(alignment: .top, spacing: 6) {
-                        Text(routines[i].title)
-                            .font(.routina(.caption2))
-                            .foregroundColor(.black)
-
-                        if let type = routines[i].type {
-                            Image(getTagImageName(from: type))
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(height: 14)
-                        }
-                    }
+                ForEach(routines, id: \.id) { routine in
+                    routineRow(for: routine)
                 }
-            } else {
-                // 꺼졌을 땐 첫 루틴 + "+N" 요약
-                if let first = routines.first {
-                    HStack(alignment: .top, spacing: 6) {
-                        Text(first.title)
-                            .font(.routina(.caption2))
-                            .foregroundColor(.gray9)
-
-                        if routines.count > 1 {
-                            Text("+\(routines.count - 1)")
-                                .font(.routina(.caption2))
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.gray7)
-                                .cornerRadius(8)
-                        }
-                    }
-                }
+            } else if let first = routines.first {
+                routineRow(for: first, collapsed: true)
             }
-
+            
             // 더보기 메뉴
             HStack {
                 Spacer()
@@ -97,6 +77,38 @@ struct AlarmCard: View {
         .cornerRadius(24)
         .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
     }
+    
+    @ViewBuilder
+    private func routineRow(for routine: AlarmRoutineInfo,
+                            collapsed: Bool = false) -> some View {
+        HStack(alignment: .top, spacing: 6) {
+            Text(routine.title)
+                .font(.routina(.caption2))
+                .foregroundColor(collapsed ? .gray9 : .black)
+
+            if let type = routine.type {
+                Text(type)
+                    .font(.routina(.caption3))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(
+                        Capsule()
+                            .fill(tagColor(for: type))
+                    )
+            }
+
+            if collapsed, routines.count > 1 {
+                Text("+\(routines.count - 1)")
+                    .font(.routina(.caption2))
+                    .foregroundColor(.white)
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 2)
+                    .background(Color.gray7)
+                    .cornerRadius(8)
+            }
+        }
+    }
 
     // 태그 이미지 매핑
     private func getTagImageName(from type: String) -> String {
@@ -110,37 +122,22 @@ struct AlarmCard: View {
     }
 }
 
-struct StatefulPreviewWrapper<Value, Content: View>: View {
-    @State private var value: Value // 내부 상태 저장
-    var content: (Binding<Value>) -> Content // 이 상태를 바인딩으로 넘김
-
-    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
-        _value = State(initialValue: value) // 초기값 세팅
-        self.content = content
-    }
-
-    var body: some View {
-        content($value) // 바인딩 전달
+private func tagColor(for type: String) -> Color {
+    switch type {
+    case "단순형":   return .gray6
+    case "시간형":   return .mainBlue.opacity(0.8)
+    case "개수형":   return .orange.opacity(0.8)
+    case "복합형":   return .purple.opacity(0.8)
+    default:        return .gray4
     }
 }
 
-#Preview {
-    StatefulPreviewWrapper(true) { $isOn in
-        AlarmCard(
-            timeText: "오전 6:20",
-            weekdays: [],
-            routines: [
-                ("5분 동안 스트레칭", "시간형"),
-                ("물 한 잔 마시기", "단순형"),
-                ("출근 준비", "단순형"),
-                ("오늘 일정 간단히 검토", "단순형"),
-                ("아침 간식 준비 (바나나, 요거트)", "단순형"),
-                ("출근 복장 최종 점검", "단순형")
-            ],
-            isOn: $isOn,
-            onDelete: {}
-        )
-        .padding()
-        .background(Color.gray.opacity(0.1))
+struct StatefulPreviewWrapper<Value, Content: View>: View {
+    @State private var value: Value
+    var content: (Binding<Value>) -> Content
+    init(_ value: Value, content: @escaping (Binding<Value>) -> Content) {
+        _value = State(initialValue: value)
+        self.content = content
     }
+    var body: some View { content($value) }
 }
