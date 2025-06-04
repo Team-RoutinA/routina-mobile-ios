@@ -10,7 +10,7 @@ import SwiftUI
 struct RootView: View {
     @State private var selectedTab: Int = 1
     @State private var isLoggedIn: Bool = UserDefaults.standard.string(forKey: "userId") != nil
-
+    
     init() {
         setupTabAppearance()
     }
@@ -19,23 +19,24 @@ struct RootView: View {
         NavigationStack {
             if isLoggedIn {
                 TabView(selection: $selectedTab) {
-            PlanView()
-                .tabItem {
-                    Label("계획", image: "planTab")
+                    PlanView()
+                        .tabItem {
+                            Label("계획", image: "planTab")
+                        }
+                        .tag(0)
+                    
+                    DoView(selectedTab: $selectedTab)
+                        .tabItem {
+                            Label("홈", image: "doTab")
+                        }
+                        .tag(1)
+                    
+                    SeeView()
+                        .tabItem {
+                            Label("내 기록", image: "seeTab")
+                        }
+                        .tag(2)
                 }
-                .tag(0)
-            
-            DoView(selectedTab: $selectedTab)
-                .tabItem {
-                    Label("홈", image: "doTab")
-                }
-                .tag(1)
-            
-            SeeView()
-                .tabItem {
-                    Label("내 기록", image: "seeTab")
-                }
-                .tag(2)
             } else {
                 LoginView(isLoggedIn: $isLoggedIn)
             }
