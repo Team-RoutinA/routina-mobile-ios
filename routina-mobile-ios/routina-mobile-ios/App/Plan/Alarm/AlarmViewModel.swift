@@ -94,9 +94,12 @@ final class AlarmViewModel: ObservableObject {
                         if let r = self.routineMap[item.routine_id] {
                             return (id: item.routine_id,
                                     title: r.title,
-                                    type : r.routineType?.displayName)
+                                    type : r.routineType?.displayName,
+                                    deadline: r.limitMinutes,
+                                    successStandard: r.successStandard,
+                                    goalCount: r.goalCount)
                         }
-                        return (id: item.routine_id, title: "(제목 없음)", type: nil)
+                        return (id: item.routine_id, title: "(제목 없음)", type: nil, deadline: 0, successStandard: nil, goalCount: 0)
                     }
 
                     return AlarmModel(
@@ -232,6 +235,23 @@ final class AlarmViewModel: ObservableObject {
                 // 성공 시에는 이미 UI가 업데이트되어 있음
             })
             .store(in: &bag)
+    }
+    
+    // 활성화 & 오늘요일 & 시간서순으로 알람들 필터링
+    func filteredAlarms() -> [AlarmModel] {
+        let now = Date()
+        let todayWeekdayIndex = Calendar.current.component(.weekday, from: now) - 1
+        let todayKor = AlarmViewModel.weekdayOrder[todayWeekdayIndex]
+
+        return alarms.filter { alarm in
+            guard let alarmTime = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: alarm.alarmTime), minute: Calendar.current.component(.minute, from: alarm.alarmTime), second: 0, of: Date()) else { return false }
+
+            let nowTime = Calendar.current.date(bySettingHour: Calendar.current.component(.hour, from: now), minute: Calendar.current.component(.minute, from: now), second: 0, of: Date()) ?? now
+
+            return alarm.isOn &&
+                   alarm.weekdays.contains(todayKor) &&
+                   alarmTime > nowTime
+        }
     }
 }
 

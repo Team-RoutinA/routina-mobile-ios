@@ -11,8 +11,6 @@ struct ExistAlarmView: View {
     @ObservedObject var alarmViewModel: AlarmViewModel
     @ObservedObject var routineViewModel: RoutineViewModel
     
-    let alarmModel: AlarmModel
-    
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
@@ -20,10 +18,11 @@ struct ExistAlarmView: View {
                     titleSection
                     Spacer()
                 }
-                
-                alarmSection
-                
-                routineSection
+                let alarmModels = alarmViewModel.filteredAlarms()
+                ForEach(alarmModels.indices, id: \.self) { index in
+                    alarmSection(for: alarmModels[index])
+                    routineSection(for: alarmModels[index].routines)
+                }
             }
         }
     }
@@ -34,26 +33,24 @@ struct ExistAlarmView: View {
             .padding(.horizontal, 24)
     }
     
-    private var alarmSection: some View {
-        VStack(spacing: 0) {
-            RoutineSelectRow(
-                iconName: "alarm",
-                title: alarmModel.timeText,
-                subtitle: "기상!",
-                showChevron: false,
-                isPlaceholder: false,
-                onTap: {}
-            )
-        }
+    private func alarmSection(for alarm: AlarmModel) -> some View {
+        RoutineSelectRow(
+            iconName: "alarm",
+            title: alarm.timeText,
+            subtitle: "기상!",
+            showChevron: false,
+            isPlaceholder: false,
+            onTap: {}
+        )
         .padding(.horizontal, 24)
         .padding(.vertical, 6)
         .frame(maxWidth: .infinity)
         .background(.sub3Blue)
     }
     
-    private var routineSection: some View {
+    private func routineSection(for routines: [AlarmRoutineInfo]) -> some View {
         VStack(spacing: 0) {
-            if routineViewModel.routines.isEmpty {
+            if routines.isEmpty {
                 RoutineSelectRow(
                     iconName: "",
                     title: "아직 생성된 루틴이 없어요",
@@ -63,19 +60,8 @@ struct ExistAlarmView: View {
                     onTap: {}
                 )
             } else {
-                let routines = routineViewModel.routines
-                ForEach(routines.indices, id: \.self) { index in
-                    let routine = routines[index]
-                    let routineTypeString = routine.routineType?.displayName
-                    
-                    RoutineSelectRow(
-                        iconName: routine.icon,
-                        title: routine.title,
-                        subtitle: formatRoutineSubtitle(routine),
-                        showChevron: false,
-                        isPlaceholder: false,
-                        onTap: {}
-                    )
+                ForEach(routines, id: \.id) { routine in
+                    routineRow(for: routine)
                 }
             }
         }
@@ -84,15 +70,15 @@ struct ExistAlarmView: View {
         .frame(maxWidth: .infinity)
     }
     
-    private func formatRoutineSubtitle(_ routine: RoutineModel) -> String? {
+    private func formatRoutineSubtitle(_ routine: AlarmRoutineInfo) -> String? {
         var components: [String] = []
         
         // 타입별 목표/지속 시간 정보
-        if let goalCount = routine.goalCount {
-            switch routine.routineType {
-            case .numeric:
+        if let goalCount = routine.goalCount, let routineType = routine.type {
+            switch routineType {
+            case "정량형":
                 components.append("목표 \(goalCount)개")
-            case .time:
+            case "시간형":
                 components.append("지속 \(goalCount)분")
             default:
                 break
@@ -100,7 +86,7 @@ struct ExistAlarmView: View {
         }
         
         // 마감 기한
-        if let limitMinutes = routine.limitMinutes {
+        if let limitMinutes = routine.deadline {
             components.append("마감 \(limitMinutes)분")
         }
         
@@ -109,17 +95,34 @@ struct ExistAlarmView: View {
             components.append(successStandard)
         }
         
-        return components.isEmpty ? routine.routineType?.displayName : components.joined(separator: " • ")
+        return components.isEmpty ? routine.type : components.joined(separator: " • ")
+    }
+    
+    @ViewBuilder
+    private func routineRow(for routine: AlarmRoutineInfo) -> some View {
+        if let type = routine.type {
+            RoutineSelectRow(
+                iconName: getTypeImageName(from: type),
+                title: routine.title,
+                subtitle: formatRoutineSubtitle(routine),
+                showChevron: false,
+                isPlaceholder: false,
+                onTap: {}
+            )
+        }
+    }
+    
+    private func getTypeImageName(from type: String) -> String {
+        switch type {
+        case "단순형": return "simple"
+        case "시간형": return "time"
+        case "정량형": return "numeric"
+        case "복합형": return "complex"
+        default: return ""
+        }
     }
 }
 
 #Preview {
-    ExistAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel(), alarmModel: AlarmModel(
-        alarmTime: Calendar.current.date(from: DateComponents(hour: 20, minute: 26)) ?? Date(),
-        weekdays: Set(["월", "화", "수"]),
-        routines: [],
-        isOn: true,
-        volume: 0.5,
-        isVibrationOn: true
-    ))
+    ExistAlarmView(alarmViewModel: AlarmViewModel(), routineViewModel: RoutineViewModel())
 }

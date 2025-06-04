@@ -265,7 +265,10 @@ struct SelectRoutineView: View {
                     routines  : selectedRoutines.map {
                         (id: $0.routineId ?? "",
                          title: $0.title,
-                         type:  $0.routineType?.displayName)
+                         type:  $0.routineType?.displayName,
+                         deadline: $0.limitMinutes,
+                         successStandard: $0.successStandard,
+                         goalCount: $0.goalCount)
                     },
                     isOn            : alarmModel.isOn,
                     volume          : alarmModel.volume,

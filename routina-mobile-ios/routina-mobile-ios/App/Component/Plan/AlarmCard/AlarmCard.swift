@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-typealias AlarmRoutineInfo = (id: String, title: String, type: String?)
+typealias AlarmRoutineInfo = (id: String, title: String, type: String?, deadline: Int?, successStandard: String?, goalCount: Int?)
 
 struct AlarmCard: View {
     let timeText: String
