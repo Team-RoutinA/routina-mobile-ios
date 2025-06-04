@@ -50,7 +50,7 @@ class RoutineViewModel: ObservableObject {
     }
     
     // 루틴 리스트 불러오기
-    func fetchRoutines() {
+    func fetchRoutines(completion: (([RoutineModel]) -> Void)? = nil) {
         service.fetchRoutines()
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
@@ -81,6 +81,7 @@ class RoutineViewModel: ObservableObject {
                         )
                     }
                     print("루틴 목록 갱신 완료: \(self.routines.count)개")
+                    completion?(self.routines)
                 }
             })
             .store(in: &cancellables)

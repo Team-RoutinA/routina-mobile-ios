@@ -94,9 +94,12 @@ final class AlarmViewModel: ObservableObject {
                         if let r = self.routineMap[item.routine_id] {
                             return (id: item.routine_id,
                                     title: r.title,
-                                    type : r.routineType?.displayName)
+                                    type : r.routineType?.displayName,
+                                    deadline: r.limitMinutes,
+                                    successStandard: r.successStandard,
+                                    goalCount: r.goalCount)
                         }
-                        return (id: item.routine_id, title: "(제목 없음)", type: nil)
+                        return (id: item.routine_id, title: "(제목 없음)", type: nil, deadline: 0, successStandard: nil, goalCount: 0)
                     }
 
                     return AlarmModel(
