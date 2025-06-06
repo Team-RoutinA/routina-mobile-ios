@@ -33,9 +33,24 @@ struct RoutineExecutionView: View {
                 }
                 
                 HStack(spacing: 0) {
-                    RoutineControlButton(imageName: "prev", text: "이전") {}
+                    RoutineControlButton(
+                        imageName: "prev",
+                        enable: currentIndex > 0,
+                        text: "이전"
+                    ) {
+                        if currentIndex > 0 {
+                            currentIndex -= 1
+                        }
+                    }
                     
-                    RoutineControlButton(imageName: "next", isPrev: false, text: "건너뛰기") {nextRoutine()}
+                    RoutineControlButton(
+                        imageName: "next",
+                        isPrev: false,
+                        enable: currentIndex < (alarmModel.routineDetails?.count ?? 0) - 1,
+                        text: "건너뛰기"
+                    ) {
+                        nextRoutine()
+                    }
                 }
             }
             .navigationTitle(navigationTitle)

@@ -23,57 +23,36 @@ struct RoutineControlButton: View {
         self.action = action
     }
     
+    private var buttonContent: some View {
+        HStack(spacing: 8) {
+            if isPrev {
+                Image(imageName)
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 9.02, height: 15.16)
+                    .foregroundColor(enable ? .gray6 : .gray4)
+                
+                Text(text)
+                    .foregroundColor(enable ? .gray6 : .gray4)
+                    .font(.routina(.body_sb16))
+            } else {
+                Text(text)
+                    .foregroundColor(enable ? .gray6 : .gray4)
+                    .font(.routina(.body_sb16))
+                
+                Image(imageName)
+                    .renderingMode(.template)
+                    .resizable()
+                    .frame(width: 9.02, height: 15.16)
+                    .foregroundColor(enable ? .gray6 : .gray4)
+            }
+        }
+    }
+    
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 8) {
-                if isPrev {
-                    if enable {
-                        Image(imageName)
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 9.02, height: 15.16)
-                            .foregroundColor(.gray6)
-                        
-                        Text(text)
-                            .foregroundColor(.gray6)
-                            .font(.routina(.body_sb16))
-                    } else {
-                        Image(imageName)
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 9.02, height: 15.16)
-                            .foregroundColor(.gray4)
-                        
-                        Text(text)
-                            .foregroundColor(.gray4)
-                            .font(.routina(.body_sb16))
-                    }
-                } else {
-                    if enable {
-                        Text(text)
-                            .foregroundColor(.gray6)
-                            .font(.routina(.body_sb16))
-                        
-                        Image(imageName)
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 9.02, height: 15.16)
-                            .foregroundColor(.gray6)
-                    } else {
-                        Text(text)
-                            .foregroundColor(.gray4)
-                            .font(.routina(.body_sb16))
-                        
-                        Image(imageName)
-                            .renderingMode(.template)
-                            .resizable()
-                            .frame(width: 9.02, height: 15.16)
-                            .foregroundColor(.gray4)
-
-                    }
-                }
-            }
-            .frame(width: UIScreen.main.bounds.width / 2, height: 48)
+            buttonContent
+                .frame(width: UIScreen.main.bounds.width / 2, height: 48)
         }
         .disabled(!enable)
     }
