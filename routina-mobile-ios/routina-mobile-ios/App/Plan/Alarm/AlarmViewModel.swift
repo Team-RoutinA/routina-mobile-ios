@@ -23,7 +23,7 @@ final class AlarmViewModel: ObservableObject {
 
     // 알람 생성
     func addAlarm(model: AlarmModel,
-                  completion: @escaping (Bool) -> Void) {
+                  completion: @escaping (Bool, String?) -> Void) {
         
         let repeatDays = model.weekdays
             .compactMap { Self.weekdayOrder.firstIndex(of: $0) }
@@ -49,7 +49,7 @@ final class AlarmViewModel: ObservableObject {
             .sink(receiveCompletion: { result in
                 if case .failure(let err) = result {
                     print("❌ Alarm create 실패:", err)
-                    completion(false)
+                    completion(false, nil)
                 }
             }, receiveValue: { [weak self] response in
                 var saved = model
@@ -60,7 +60,7 @@ final class AlarmViewModel: ObservableObject {
                     text: "알람이 성공적으로 생성되었습니다.",
                     isSuccess: true
                 )
-                completion(true)
+                completion(true, response.alarm_id)
             })
             .store(in: &bag)
     }

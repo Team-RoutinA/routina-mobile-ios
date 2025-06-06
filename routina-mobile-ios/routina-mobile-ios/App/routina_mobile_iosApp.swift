@@ -12,7 +12,7 @@ struct routina_mobile_iosApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     @State private var moveToRoutine = false
-    @State private var selectedAlarmModel: AlarmModel? = nil
+    @State private var selectedAlarmId: String? = nil
     
     @Environment(\.scenePhase) private var scenePhase
     
@@ -34,10 +34,8 @@ struct routina_mobile_iosApp: App {
                                 alarmViewModel.updateRoutineMap(routines)
                                 
                                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    if let first = alarmViewModel.alarms.first {
-                                        selectedAlarmModel = first
-                                        moveToRoutine = true
-                                    }
+                                    selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
+                                    moveToRoutine = true
                                 }
                             }
                             UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
@@ -47,10 +45,8 @@ struct routina_mobile_iosApp: App {
                         let alarmViewModel = AlarmViewModel()
                         alarmViewModel.fetchAlarms()
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            if let first = alarmViewModel.alarms.first {
-                                selectedAlarmModel = first
-                                moveToRoutine = true
-                            }
+                            selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
+                            moveToRoutine = true
                         }
                     }
                     .onChange(of: scenePhase) {
@@ -64,10 +60,8 @@ struct routina_mobile_iosApp: App {
                                     alarmViewModel.updateRoutineMap(routines)
                                     
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                        if let first = alarmViewModel.alarms.first {
-                                            selectedAlarmModel = first
-                                            moveToRoutine = true
-                                        }
+                                        selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
+                                        moveToRoutine = true
                                     }
                                 }
                                 UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
@@ -75,8 +69,8 @@ struct routina_mobile_iosApp: App {
                         }
                     }
                     .navigationDestination(isPresented: $moveToRoutine) {
-                        if let alarm = selectedAlarmModel {
-                            AlarmScreenView(alarmModel: alarm)
+                        if let alarmId = selectedAlarmId {
+                            AlarmScreenView(alarmId: alarmId)
                         }
                     }
             }
