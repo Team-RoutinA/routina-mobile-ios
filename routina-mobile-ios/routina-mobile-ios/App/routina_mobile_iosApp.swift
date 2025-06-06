@@ -9,9 +9,77 @@ import SwiftUI
 
 @main
 struct routina_mobile_iosApp: App {
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
+    
+    @State private var moveToRoutine = false
+    @State private var selectedAlarmModel: AlarmModel? = nil
+    
+    @Environment(\.scenePhase) private var scenePhase
+    
+    init() {
+        NotificationService.requestPermission()
+    }
+    
     var body: some Scene {
         WindowGroup {
-            RootView()
+            NavigationStack {
+                RootView()
+                    .onAppear {
+                        print("APPEAR")
+                        if UserDefaults.standard.bool(forKey: "launchFromNotification") {
+                            let routineViewModel = RoutineViewModel()
+                            routineViewModel.fetchRoutines { routines in
+                                let alarmViewModel = AlarmViewModel()
+                                alarmViewModel.fetchAlarms()
+                                alarmViewModel.updateRoutineMap(routines)
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                    if let first = alarmViewModel.alarms.first {
+                                        selectedAlarmModel = first
+                                        moveToRoutine = true
+                                    }
+                                }
+                            }
+                            UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
+                        }
+                    }
+                    .onReceive(NotificationCenter.default.publisher(for: .navigateToRoutine)) { _ in
+                        let alarmViewModel = AlarmViewModel()
+                        alarmViewModel.fetchAlarms()
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                            if let first = alarmViewModel.alarms.first {
+                                selectedAlarmModel = first
+                                moveToRoutine = true
+                            }
+                        }
+                    }
+                    .onChange(of: scenePhase) {
+                        print("NEW PHASE: \(scenePhase)")
+                        if scenePhase == .active {
+                            if UserDefaults.standard.bool(forKey: "launchFromNotification") {
+                                let routineViewModel = RoutineViewModel()
+                                routineViewModel.fetchRoutines { routines in
+                                    let alarmViewModel = AlarmViewModel()
+                                    alarmViewModel.fetchAlarms()
+                                    alarmViewModel.updateRoutineMap(routines)
+                                    
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                        if let first = alarmViewModel.alarms.first {
+                                            selectedAlarmModel = first
+                                            moveToRoutine = true
+                                        }
+                                    }
+                                }
+                                UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
+                            }
+                        }
+                    }
+                    .navigationDestination(isPresented: $moveToRoutine) {
+                        if let alarm = selectedAlarmModel {
+                            AlarmScreenView(alarmModel: alarm)
+                        }
+                    }
+            }
         }
     }
 }
