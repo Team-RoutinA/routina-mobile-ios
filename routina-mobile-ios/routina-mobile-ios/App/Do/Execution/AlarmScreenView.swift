@@ -10,7 +10,17 @@ import SwiftUI
 struct AlarmScreenView: View {
     @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
     @State private var isPresentingExecutionView = false
-    let alarmModel: AlarmModel
+    //let alarmModel: AlarmModel
+    @State private var alarmModel: AlarmModel = AlarmModel(
+        alarmTime: Calendar.current.date(from: DateComponents(hour: 19, minute: 20)) ?? Date(),
+        weekdays: ["월", "화"],
+        routines: [],
+        isOn: true,
+        volume: 0.5,
+        isVibrationOn: true
+    )
+        
+    let alarmId: String
     
     // 날짜 포맷
     private var dateString: String {
@@ -54,21 +64,23 @@ struct AlarmScreenView: View {
                 }
             }
         }
+        .toolbar(.hidden)
         .fullScreenCover(isPresented: $isPresentingExecutionView) {
             NavigationStack {
                 RoutineExecutionView(alarmTime: alarmModel.alarmTime, routineViewModel: viewModel)
             }
         }
+        
     }
 }
 
-#Preview {
-    AlarmScreenView(alarmModel: AlarmModel(
-        alarmTime: Calendar.current.date(from: DateComponents(hour: 19, minute: 20)) ?? Date(),
-        weekdays: ["월", "화"],
-        routines: [],
-        isOn: true,
-        volume: 0.5,
-        isVibrationOn: true
-    ))
-}
+//#Preview {
+//    AlarmScreenView(alarmModel: AlarmModel(
+//        alarmTime: Calendar.current.date(from: DateComponents(hour: 19, minute: 20)) ?? Date(),
+//        weekdays: ["월", "화"],
+//        routines: [],
+//        isOn: true,
+//        volume: 0.5,
+//        isVibrationOn: true
+//    ))
+//}

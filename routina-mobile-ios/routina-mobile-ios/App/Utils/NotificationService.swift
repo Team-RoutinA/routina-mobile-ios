@@ -19,12 +19,12 @@ enum NotificationService {
         }
     }
     
-    static func scheduleNotification(weekday: Int, hour: Int, minute: Int) {
+    static func scheduleNotification(alarmId: String, weekday: Int, hour: Int, minute: Int) {
         let content = UNMutableNotificationContent()
-        content.title = "루틴 알림"
+        content.title = "RoutinA"
         content.body = "지금 루틴을 시작할 시간이에요!"
         content.sound = .default
-        content.userInfo = ["type": "routine"]
+        content.userInfo = ["alarmId": alarmId]
         
         var dateComponents = DateComponents()
         dateComponents.weekday = weekday
