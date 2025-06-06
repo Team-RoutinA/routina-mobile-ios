@@ -15,7 +15,8 @@ struct AlarmModel {
     var isOn: Bool
     var volume: Double
     var isVibrationOn: Bool
-    
+    var routineDetails: [RoutineDetail]?
+
     var timeText: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "a h:mm"

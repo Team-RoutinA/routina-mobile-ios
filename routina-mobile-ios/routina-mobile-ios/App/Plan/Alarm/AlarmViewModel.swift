@@ -11,6 +11,7 @@ import SwiftUI
 
 final class AlarmViewModel: ObservableObject {
     @Published var alarms: [AlarmModel] = []
+    @Published var selectedSpecificAlarm: AlarmModel? = nil
     
     private var routineMap: [String: RoutineModel] = [:]
     
@@ -44,6 +45,8 @@ final class AlarmViewModel: ObservableObject {
             repeat_days: repeatDays,
             routines: routines
         )
+        
+        print("###########\n###########\nrequest: \(request)###########\n###########\n")
         
         service.createAlarm(request)
             .sink(receiveCompletion: { result in
@@ -110,9 +113,44 @@ final class AlarmViewModel: ObservableObject {
                         routines: infos,
                         isOn: response.status == "Active",
                         volume: response.sound_volume,
-                        isVibrationOn: true
+                        isVibrationOn: true,
+                        routineDetails: nil
                     )
                 }
+            })
+            .store(in: &bag)
+    }
+    
+    func fetchSpecificAlarm(id: String) {
+        print("✅ 호출 시작: fetchSpecificAlarm with id =", id)
+        
+        guard !id.isEmpty else {
+            print("❌ alarmId가 비어 있습니다.")
+            return
+        }
+        
+        service.fetchSpecificAlarm(id: id)
+            .sink(receiveCompletion: { result in
+                if case .failure(let err) = result {
+                    print("❌ 특정 알람 조회 실패: ", err)
+                }
+            }, receiveValue: { [weak self] response in
+                print("✅ 응답 수신: \(response)")
+                guard let self = self else { return }
+                
+                let model = AlarmModel(
+                    alarmId: response.alarm_id,
+                    alarmTime: Self.nextDate(hhmm: response.time,
+                                             weekdays: response.repeat_days ?? []),
+                    weekdays: Set(Self.intWeekdaysToKor(response.repeat_days ?? [])),
+                    routines: [],
+                    isOn: response.status == "Active",
+                    volume: response.sound_volume,
+                    isVibrationOn: response.vibration_on,
+                    routineDetails: response.routines
+                )
+                
+                self.selectedSpecificAlarm = model
             })
             .store(in: &bag)
     }

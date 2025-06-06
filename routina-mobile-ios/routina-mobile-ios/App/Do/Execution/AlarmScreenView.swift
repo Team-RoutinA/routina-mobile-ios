@@ -8,18 +8,9 @@
 import SwiftUI
 
 struct AlarmScreenView: View {
-    @ObservedObject var viewModel: RoutineViewModel = RoutineViewModel()
     @State private var isPresentingExecutionView = false
-    //let alarmModel: AlarmModel
-    @State private var alarmModel: AlarmModel = AlarmModel(
-        alarmTime: Calendar.current.date(from: DateComponents(hour: 19, minute: 20)) ?? Date(),
-        weekdays: ["월", "화"],
-        routines: [],
-        isOn: true,
-        volume: 0.5,
-        isVibrationOn: true
-    )
-        
+    @StateObject var alarmViewModel = AlarmViewModel()
+
     let alarmId: String
     
     // 날짜 포맷
@@ -35,7 +26,7 @@ struct AlarmScreenView: View {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "HH:mm"
-        return formatter.string(from: alarmModel.alarmTime)
+        return formatter.string(from: alarmViewModel.selectedSpecificAlarm?.alarmTime ?? Date())
     }
     
     var body: some View {
@@ -64,10 +55,17 @@ struct AlarmScreenView: View {
                 }
             }
         }
+        .onAppear {
+            alarmViewModel.fetchSpecificAlarm(id: alarmId)
+        }
         .toolbar(.hidden)
         .fullScreenCover(isPresented: $isPresentingExecutionView) {
-            NavigationStack {
-                RoutineExecutionView(alarmTime: alarmModel.alarmTime, routineViewModel: viewModel)
+            if let alarm = alarmViewModel.selectedSpecificAlarm {
+                NavigationStack {
+                    if let routines = alarm.routineDetails {
+                        RoutineExecutionView(alarmModel: alarm, routines: routines)
+                    }
+                }
             }
         }
         

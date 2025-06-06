@@ -9,11 +9,11 @@ import SwiftUI
 
 struct ComplexRoutineView: View {
     let alarmTime: Date
-    let routine: RoutineModel
+    let routine: RoutineDetail
     let onComplete: () -> Void
     
     var endTimeString: String {
-        let endTime = Calendar.current.date(byAdding: .minute, value: routine.limitMinutes ?? 0, to: alarmTime) ?? alarmTime
+        let endTime = Calendar.current.date(byAdding: .minute, value: routine.duration_seconds ?? 0, to: alarmTime) ?? alarmTime
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "HH:mm"
@@ -24,7 +24,7 @@ struct ComplexRoutineView: View {
         VStack {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [.sub3Blue, .white]), startPoint: .top, endPoint: .bottom)
-                    .frame(width: .infinity, height: 360)
+                    .frame(width: UIScreen.main.bounds.width, height: 360)
                 Image(.complexIcon)
                     .resizable()
                     .scaledToFit()
@@ -38,7 +38,7 @@ struct ComplexRoutineView: View {
                     Text(routine.title)
                         .font(.routina(.h1))
                     
-                    Text(routine.successStandard!)
+                    Text(routine.success_note)
                         .font(.routina(.body_r16))
                 }
                 
@@ -51,13 +51,13 @@ struct ComplexRoutineView: View {
     }
 }
 
-#Preview {
-    ComplexRoutineView(alarmTime: Date(), routine: RoutineModel(
-        title: "강아지 산책 갔다오기",
-        icon: "complex",
-        routineType: .complex,
-        goalCount: 10,
-        limitMinutes: 60,
-        successStandard: "꼭 실외배변 성공하기!!"
-    )) {}
-}
+//#Preview {
+//    ComplexRoutineView(alarmTime: Date(), routine: RoutineModel(
+//        title: "강아지 산책 갔다오기",
+//        icon: "complex",
+//        routineType: .complex,
+//        goalCount: 10,
+//        limitMinutes: 60,
+//        successStandard: "꼭 실외배변 성공하기!!"
+//    )) {}
+//}

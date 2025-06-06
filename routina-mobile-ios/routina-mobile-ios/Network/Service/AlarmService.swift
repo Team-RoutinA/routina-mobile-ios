@@ -38,6 +38,16 @@ final class AlarmService {
             .eraseToAnyPublisher()
     }
     
+    // 특정 알람 조회
+    func fetchSpecificAlarm(id: String) -> AnyPublisher<GetAlarmDetailResponse, Error> {
+        provider.requestPublisher(.getAlarm(id: id))
+            .filterSuccessfulStatusCodes()
+            .map(\.data)
+            .decode(type: GetAlarmDetailResponse.self, decoder: decoder)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
+    
     // 알람 삭제
     func deleteAlarm(_ id: String) -> AnyPublisher<Void, Error> {
         provider.requestPublisher(.deleteAlarm(id: id))

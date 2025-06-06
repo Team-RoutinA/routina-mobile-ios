@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct SimpleRoutineView: View {
-    let routine: RoutineModel
+    let routine: RoutineDetail
     let onComplete: () -> Void
     
     var body: some View {
         VStack {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [.sub3Blue, .white]), startPoint: .top, endPoint: .bottom)
-                    .frame(width: .infinity, height: 360)
+                    .frame(width: UIScreen.main.bounds.width, height: 360)
                 Image(.simpleIcon)
                     .resizable()
                     .scaledToFit()
@@ -29,7 +29,7 @@ struct SimpleRoutineView: View {
                     Text(routine.title)
                         .font(.routina(.h1))
 
-                    Text(routine.successStandard!)
+                    Text(routine.success_note)
                         .font(.routina(.body_r16))
                 }
 
@@ -42,13 +42,13 @@ struct SimpleRoutineView: View {
     }
 }
 
-#Preview {
-    SimpleRoutineView(routine: RoutineModel(
-        title: "물 한 잔 마시기",
-        icon: "simple",
-        routineType: .simple,
-        goalCount: nil,
-        limitMinutes: 30,
-        successStandard: "미지근한 물로 250ml 이상 마시기!"
-    )) {}
-}
+//#Preview {
+//    SimpleRoutineView(routine: RoutineModel(
+//        title: "물 한 잔 마시기",
+//        icon: "simple",
+//        routineType: .simple,
+//        goalCount: nil,
+//        limitMinutes: 30,
+//        successStandard: "미지근한 물로 250ml 이상 마시기!"
+//    )) {}
+//}
