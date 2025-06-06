@@ -51,7 +51,15 @@ struct AlarmScreenView: View {
                 Spacer()
                 
                 MainButton(text: "알람 끄기") {
-                    isPresentingExecutionView = true
+                    if let alarmModel = alarmViewModel.selectedSpecificAlarm {
+                        alarmViewModel.startAlarm(model: alarmModel) { success, execId in
+                            if success, let execId = execId {
+                                isPresentingExecutionView = true
+                            } else {
+                                print("###실패###")
+                            }
+                        }
+                    }
                 }
             }
         }
