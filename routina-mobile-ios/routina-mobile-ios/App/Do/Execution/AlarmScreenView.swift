@@ -56,7 +56,7 @@ struct AlarmScreenView: View {
         }
         .fullScreenCover(isPresented: $isPresentingExecutionView) {
             NavigationStack {
-                RoutineExecutionView(alarmTime: alarmModel.alarmTime, viewModel: viewModel)
+                RoutineExecutionView(alarmTime: alarmModel.alarmTime, routineViewModel: viewModel)
             }
         }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct RoutineExecutionView: View {
     var alarmTime: Date
-    @ObservedObject var viewModel: RoutineViewModel
+    @ObservedObject var routineViewModel: RoutineViewModel
     @Environment(\.dismiss) var dismiss
     @State private var currentIndex = 0
         
@@ -18,7 +18,7 @@ struct RoutineExecutionView: View {
     }
     
     var body: some View {
-        let routine = viewModel.routines[currentIndex]
+        let routine = routineViewModel.routines[currentIndex]
         
         VStack(spacing: 24) {
             switch routine.routineType {
@@ -59,7 +59,7 @@ struct RoutineExecutionView: View {
     }
     
     private func nextRoutine() {
-        if currentIndex < viewModel.routines.count - 1 {
+        if currentIndex < routineViewModel.routines.count - 1 {
             currentIndex += 1
         }
         // 루틴이 끝났을 때의 처리
@@ -71,5 +71,5 @@ struct RoutineExecutionView: View {
 }
 
 #Preview {
-    RoutineExecutionView(alarmTime: Date(), viewModel: RoutineViewModel())
+    RoutineExecutionView(alarmTime: Date(), routineViewModel: RoutineViewModel())
 }

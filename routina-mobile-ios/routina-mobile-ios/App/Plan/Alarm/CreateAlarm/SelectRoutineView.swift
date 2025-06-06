@@ -277,6 +277,10 @@ struct SelectRoutineView: View {
                 alarmViewModel.addAlarm(model: draft) { success in
                     if success {
                         NotificationCenter.default.post(name: .alarmCreated, object: nil)
+                        
+                        // 알람 설정하기
+                        scheduleAlarmNotifications(for: draft)
+                        
                         dismiss()
                     }
                 }
@@ -284,5 +288,18 @@ struct SelectRoutineView: View {
         )
         .padding(.horizontal, 20)
         .padding(.bottom, 16)
+    }
+    
+    private func scheduleAlarmNotifications(for draft: AlarmModel) {
+        let calendar = Calendar(identifier: .gregorian)
+        let hour = calendar.component(.hour, from: draft.alarmTime)
+        let minute = calendar.component(.minute, from: draft.alarmTime)
+        let weekdayMap = ["일": 1, "월": 2, "화": 3, "수": 4, "목": 5, "금": 6, "토": 7]
+        
+        for weekday in draft.weekdays {
+            if let weekdayInt = weekdayMap[weekday] {
+                NotificationService.scheduleNotification(weekday: weekdayInt, hour: hour, minute: minute)
+            }
+        }
     }
 }
