@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SeeView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @StateObject private var viewModel = CalendarViewModel()
 
     var body: some View {
@@ -24,6 +25,14 @@ struct SeeView: View {
             WeeklyProgressBox(progress: 50)
                 .padding(.top, 24)
             Spacer()
+        }
+        .onAppear {
+            viewModel.fetchCalendarData()
+        }
+        .onChange(of: scenePhase) {
+            if scenePhase == .active {
+                viewModel.fetchCalendarData()
+            }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.white)

@@ -104,6 +104,7 @@ struct CalendarView: UIViewRepresentable {
         // 현재 보고 있는 달이 바뀔 때 호출
         func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
             viewModel.currentMonth = calendar.currentPage
+            viewModel.fetchCalendarData()
             calendar.reloadData()
         }
     }
