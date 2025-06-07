@@ -11,10 +11,12 @@ import SwiftUI
 
 final class AlarmViewModel: ObservableObject {
     @Published var alarms: [AlarmModel] = []
+    @Published var selectedSpecificAlarm: AlarmModel? = nil
     
     private var routineMap: [String: RoutineModel] = [:]
     
     private let service = AlarmService()
+    private let executionService = ExecutionService()
     private var bag = Set<AnyCancellable>()
     
     static let weekdayOrder = ["일","월","화","수","목","금","토"]
@@ -44,6 +46,8 @@ final class AlarmViewModel: ObservableObject {
             repeat_days: repeatDays,
             routines: routines
         )
+        
+        print("###########\n###########\nrequest: \(request)###########\n###########\n")
         
         service.createAlarm(request)
             .sink(receiveCompletion: { result in
@@ -110,9 +114,44 @@ final class AlarmViewModel: ObservableObject {
                         routines: infos,
                         isOn: response.status == "Active",
                         volume: response.sound_volume,
-                        isVibrationOn: true
+                        isVibrationOn: true,
+                        routineDetails: nil
                     )
                 }
+            })
+            .store(in: &bag)
+    }
+    
+    func fetchSpecificAlarm(id: String) {
+        print("✅ 호출 시작: fetchSpecificAlarm with id =", id)
+        
+        guard !id.isEmpty else {
+            print("❌ alarmId가 비어 있습니다.")
+            return
+        }
+        
+        service.fetchSpecificAlarm(id: id)
+            .sink(receiveCompletion: { result in
+                if case .failure(let err) = result {
+                    print("❌ 특정 알람 조회 실패: ", err)
+                }
+            }, receiveValue: { [weak self] response in
+                print("✅ 응답 수신: \(response)")
+                guard let self = self else { return }
+                
+                let model = AlarmModel(
+                    alarmId: response.alarm_id,
+                    alarmTime: Self.nextDate(hhmm: response.time,
+                                             weekdays: response.repeat_days ?? []),
+                    weekdays: Set(Self.intWeekdaysToKor(response.repeat_days ?? [])),
+                    routines: [],
+                    isOn: response.status == "Active",
+                    volume: response.sound_volume,
+                    isVibrationOn: response.vibration_on,
+                    routineDetails: response.routines
+                )
+                
+                self.selectedSpecificAlarm = model
             })
             .store(in: &bag)
     }
@@ -252,6 +291,70 @@ final class AlarmViewModel: ObservableObject {
                    alarm.weekdays.contains(todayKor) &&
                    alarmTime > nowTime
         }
+    }
+    
+    // 알람 시작
+    func startAlarm(model: AlarmModel,
+                    completion: @escaping (Bool, String?) -> Void) {
+        var executionRoutines: [ExecutionRoutine] = []
+        
+        if let routines = model.routineDetails {
+            for (index, routine) in routines.enumerated() {
+                executionRoutines.append(ExecutionRoutine(
+                    routine_id: routine.id,
+                    completed: false,
+                    actual_value: nil,
+                    completed_ts: nil,
+                    abort_ts: nil,
+                    order: index + 1
+                ))
+            }
+        }
+
+        let todayScheduledTime = todayWithAlarmTime(from: model.alarmTime)
+        
+        let isoFormatter = ISO8601DateFormatter()
+        isoFormatter.timeZone = TimeZone(secondsFromGMT: 0)
+        let isoScheduledTimeString = isoFormatter.string(from: todayScheduledTime)
+        let isoDismissedTimeString = isoFormatter.string(from: Date())
+        
+        let request = StartAlarmRequest(
+            alarm_id: model.alarmId,
+            scheduled_ts: isoScheduledTimeString,
+            dismissed_ts: isoDismissedTimeString,
+            routines: executionRoutines
+        )
+        
+        executionService.startAlarm(request)
+            .sink(receiveCompletion: { result in
+                if case .failure(let err) = result {
+                    print("❌ Start Alarm 실패:", err)
+                    completion(false, nil)
+                }
+            }, receiveValue: { [weak self] response in
+                print("✅ 알람 시작 응답 수신: \(response)")
+                guard let self = self else { return }
+                
+                completion(true, response.exec_id)
+            })
+            .store(in: &bag)
+    }
+    
+    // 알람에 지정된 시각(OO시OO분) + 오늘 날짜 조합
+    func todayWithAlarmTime(from alarmTime: Date) -> Date {
+        let calendar = Calendar.current
+        let now = Date()
+        let alarmTime = alarmTime
+        
+        let alarmHour = calendar.component(.hour, from: alarmTime)
+        let alarmMinute = calendar.component(.minute, from: alarmTime)
+        
+        var components = calendar.dateComponents([.year, .month, .day], from: now)
+        components.hour = alarmHour
+        components.minute = alarmMinute
+        components.second = 0
+        
+        return calendar.date(from: components) ?? now
     }
 }
 

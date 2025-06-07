@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct TimeRoutineView: View {
-    let routine: RoutineModel
+    @ObservedObject var viewModel: RoutineViewModel
+    let routine: RoutineDetail
     let onComplete: () -> Void
     @State private var remainingTime: Int = 0
     @State private var isRunning = true
@@ -18,7 +19,7 @@ struct TimeRoutineView: View {
         VStack {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [.sub3Blue, .white]), startPoint: .top, endPoint: .bottom)
-                    .frame(width: .infinity, height: 360)
+                    .frame(width: UIScreen.main.bounds.width, height: 360)
                 Image(.timeIcon)
                     .resizable()
                     .scaledToFit()
@@ -32,7 +33,7 @@ struct TimeRoutineView: View {
                     Text(routine.title)
                         .font(.routina(.h1))
 
-                    Text(routine.successStandard!)
+                    Text(routine.success_note)
                         .font(.routina(.body_r16))
                 }
 
@@ -45,6 +46,7 @@ struct TimeRoutineView: View {
                     enable: true,
                     action: {
                         if remainingTime == 0 {
+                            viewModel.completeRoutines(routine.routine_id)
                             onComplete()
                         } else {
                             isRunning.toggle()
@@ -54,7 +56,7 @@ struct TimeRoutineView: View {
             }
         }
         .onAppear {
-            remainingTime = (routine.goalCount ?? 1) * 60
+            remainingTime = (routine.goal_value ?? 1) * 60
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 if isRunning && remainingTime > 0 {
                     remainingTime -= 1
@@ -67,13 +69,13 @@ struct TimeRoutineView: View {
     }
 }
 
-#Preview {
-    TimeRoutineView(routine: RoutineModel(
-        title: "스트레칭 5분",
-        icon: "time",
-        routineType: .time,
-        goalCount: 1,
-        limitMinutes: 60,
-        successStandard: "충분히 당기는 느낌이 들 때 까지 눌러주기"
-    )) {}
-}
+//#Preview {
+//    TimeRoutineView(routine: RoutineModel(
+//        title: "스트레칭 5분",
+//        icon: "time",
+//        routineType: .time,
+//        goalCount: 1,
+//        limitMinutes: 60,
+//        successStandard: "충분히 당기는 느낌이 들 때 까지 눌러주기"
+//    )) {}
+//}

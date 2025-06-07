@@ -37,3 +37,14 @@ struct GetAlarmResponse: Decodable {
     let repeat_days: [Int]?
     let routines: [CreateAlarmRequest.Routine]
 }
+
+struct GetAlarmDetailResponse: Decodable {
+    let alarm_id: String
+    let user_id: String?
+    let time: String
+    let vibration_on: Bool
+    let sound_volume: Double
+    let status: String
+    let repeat_days: [Int]?
+    let routines: [RoutineDetail]
+}

@@ -13,6 +13,7 @@ enum AlarmAPI {
     case getAlarms
     case deleteAlarm(id: String) // alarmId
     case updateAlarmStatus(id: String, status: String) // alarmId
+    case getAlarm(id: String) // 특정 알람 조회
 }
 
 extension AlarmAPI: BaseAPI {
@@ -22,6 +23,8 @@ extension AlarmAPI: BaseAPI {
             return "/alarms"
         case .deleteAlarm(let id), .updateAlarmStatus(let id, _):
             return "/alarms/\(id)"
+        case .getAlarm(let id):
+            return "/alarms/\(id)"
         }
     }
     
@@ -29,7 +32,7 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm:
             return .post
-        case .getAlarms:
+        case .getAlarms, .getAlarm:
             return .get
         case .deleteAlarm:
             return .delete
@@ -42,7 +45,7 @@ extension AlarmAPI: BaseAPI {
         switch self {
         case .createAlarm(let request):
             return .requestJSONEncodable(request)
-        case .getAlarms, .deleteAlarm:
+        case .getAlarms, .deleteAlarm, .getAlarm:
             return .requestPlain
         case .updateAlarmStatus(_, let status):
             return .requestParameters(
