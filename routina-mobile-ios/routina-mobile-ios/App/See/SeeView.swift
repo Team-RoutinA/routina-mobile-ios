@@ -22,16 +22,18 @@ struct SeeView: View {
                 .frame(width: 345, height: 380)
                 .padding(.top, 4)
             
-            WeeklyProgressBox(progress: 50)
+            WeeklyProgressBox(progress: viewModel.currentWeekProgress)
                 .padding(.top, 24)
             Spacer()
         }
         .onAppear {
             viewModel.fetchCalendarData()
+            viewModel.fetchWeeklyFeedbackProgress(userId: "test")
         }
         .onChange(of: scenePhase) {
             if scenePhase == .active {
                 viewModel.fetchCalendarData()
+                viewModel.fetchWeeklyFeedbackProgress(userId: "test")
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

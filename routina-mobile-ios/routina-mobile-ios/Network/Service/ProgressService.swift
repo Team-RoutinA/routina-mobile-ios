@@ -22,4 +22,13 @@ final class ProgressService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
+    func fetchWeeklyFeedback(userId: String) -> AnyPublisher<[WeeklyFeedback], Error> {
+        provider.requestPublisher(.getWeeklyFeedback(userId: userId))
+            .filterSuccessfulStatusCodes()
+            .map(\.data)
+            .decode(type: [WeeklyFeedback].self, decoder: decoder)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 }
