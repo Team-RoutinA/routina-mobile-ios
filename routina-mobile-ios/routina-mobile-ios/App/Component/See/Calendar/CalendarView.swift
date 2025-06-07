@@ -74,6 +74,14 @@ struct CalendarView: UIViewRepresentable {
             if viewModel.isDateInCurrentMonth(date),
                let progress = viewModel.progress(for: date) {
                 cell.progressLabel.text = "\(progress)%"
+                // 달성률에 따른 progress label 색상
+                if progress < 30 {
+                    cell.progressLabel.textColor = .routinaRed
+                } else if progress > 70 {
+                    cell.progressLabel.textColor = .routinaPurple
+                } else {
+                    cell.progressLabel.textColor = .routinaBlack
+                }
             } else {
                 cell.progressLabel.text = ""
             }
@@ -96,6 +104,7 @@ struct CalendarView: UIViewRepresentable {
         // 현재 보고 있는 달이 바뀔 때 호출
         func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
             viewModel.currentMonth = calendar.currentPage
+            viewModel.fetchCalendarData()
             calendar.reloadData()
         }
     }
