@@ -21,6 +21,8 @@ struct SeeView: View {
                 .frame(width: 345, height: 380)
                 .padding(.top, 4)
             
+            WeeklyProgressBox(progress: 50)
+                .padding(.top, 24)
             Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
