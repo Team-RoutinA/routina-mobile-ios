@@ -24,4 +24,15 @@ final class ExecutionService {
             .receive(on: DispatchQueue.main)
             .eraseToAnyPublisher()
     }
+    
+    // 루틴 실행 결과 전송
+    func executeRoutines(execID: String, request: RoutinesExecutionRequest) -> AnyPublisher<RoutinesExecutionResponse, Error> {
+        
+        provider.requestPublisher(.executeRoutines(execID: execID, request: request))
+            .filterSuccessfulStatusCodes()
+            .map(\.data)
+            .decode(type: RoutinesExecutionResponse.self, decoder: decoder)
+            .receive(on: DispatchQueue.main)
+            .eraseToAnyPublisher()
+    }
 }

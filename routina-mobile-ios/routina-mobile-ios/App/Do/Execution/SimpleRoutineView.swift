@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SimpleRoutineView: View {
+    @ObservedObject var viewModel: RoutineViewModel
     let routine: RoutineDetail
     let onComplete: () -> Void
     
@@ -36,7 +37,10 @@ struct SimpleRoutineView: View {
                 Text("지금 하세요")
                     .font(.PretendardExtraBold40)
                 
-                RoutineProceedButton(text: "완료", enable: true, action: onComplete)
+                RoutineProceedButton(text: "완료", enable: true, action: {
+                    viewModel.completeRoutines(routine.routine_id)
+                    onComplete()
+                })
             }
         }
     }

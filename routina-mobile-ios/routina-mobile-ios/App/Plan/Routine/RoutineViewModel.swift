@@ -10,6 +10,7 @@ import Combine
 
 class RoutineViewModel: ObservableObject {
     @Published var routines: [RoutineModel] = []
+    @Published var routineStatuses: [RoutineStatus] = []
     private let service = RoutineService()
     private var cancellables = Set<AnyCancellable>()
 
@@ -137,4 +138,77 @@ class RoutineViewModel: ObservableObject {
         })
         .store(in: &cancellables)
     }
+    
+    // 루틴들 결과 기록
+    func completeRoutines(_ routineID: String) {
+        let now = ISO8601DateFormatter().string(from: Date())
+        updateRoutines(id: routineID) { old in
+                .init(
+                    routine_id: routineID,
+                    completed: true,
+                    actual_value: old?.actual_value,
+                    completed_ts: now,
+                    abort_ts: nil
+                )
+        }
+    }
+    
+    // 루틴 abort
+    func abortAllRoutines(force: Bool = false) {
+        let now = ISO8601DateFormatter().string(from: Date())
+        routineStatuses = routineStatuses.map { routine in
+            if routine.completed && !force { return routine }
+            return RoutineStatus(
+                routine_id: routine.routine_id,
+                completed: false,
+                actual_value: nil,
+                completed_ts: nil,
+                abort_ts: now
+            )
+        }
+    }
+    
+    // 서버 보내기 위한 준비
+    func updateRoutines(id: String, transform: (RoutineStatus?) -> RoutineStatus) {
+        if let index = routineStatuses.firstIndex(where: { $0.routine_id == id }) {
+            routineStatuses[index] = transform(routineStatuses[index])
+        } else {
+            routineStatuses.append(transform(nil))
+        }
+    }
+    
+    // 루틴 건너뛰기 -> 실패
+    func failRoutine(_ routineID: String) {
+        let now = ISO8601DateFormatter().string(from: Date())
+        updateRoutines(id: routineID) { _ in
+                .init(
+                    routine_id: routineID,
+                    completed: false,
+                    actual_value: nil,
+                    completed_ts: nil,
+                    abort_ts: now
+                )
+        }
+    }
+    
+    // 루틴결과기록 서버 보내기
+    func sendRoutinesStatus(execID: String) {
+        let request = RoutinesExecutionRequest(routines: routineStatuses)
+        print("###################request###################\n\(request)\n\n###################request###################")
+        
+        let executionService = ExecutionService()
+        executionService.executeRoutines(execID: execID, request: request)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("✅ 루틴 상태 업데이트 성공")
+                case .failure(let error):
+                    print("❌ 루틴 상태 업데이트 실패: \(error)")
+                }
+            }, receiveValue: { response in
+                print("📦 서버 응답: \(response)")
+            })
+            .store(in: &cancellables)
+    }
+    
 }

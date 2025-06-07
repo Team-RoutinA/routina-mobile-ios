@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TimeRoutineView: View {
+    @ObservedObject var viewModel: RoutineViewModel
     let routine: RoutineDetail
     let onComplete: () -> Void
     @State private var remainingTime: Int = 0
@@ -45,6 +46,7 @@ struct TimeRoutineView: View {
                     enable: true,
                     action: {
                         if remainingTime == 0 {
+                            viewModel.completeRoutines(routine.routine_id)
                             onComplete()
                         } else {
                             isRunning.toggle()

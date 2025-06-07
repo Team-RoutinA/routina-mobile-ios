@@ -8,8 +8,11 @@
 import SwiftUI
 
 struct RoutineExecutionView: View {
+    @StateObject var viewModel = RoutineViewModel()
     let alarmModel: AlarmModel
     let routines: [RoutineDetail]
+    let execID: String
+    let dismissAlarmScreen: () -> Void
     @Environment(\.dismiss) var dismiss
     @State private var currentIndex = 0
         
@@ -18,17 +21,19 @@ struct RoutineExecutionView: View {
     }
     
     var body: some View {
-        if let routine = alarmModel.routineDetails?[currentIndex] {
+        if currentIndex < routines.count {
+            let routine = routines[currentIndex]
+            
             VStack(spacing: 24) {
                 switch routine.type {
                 case "simple":
-                    SimpleRoutineView(routine: routine, onComplete: nextRoutine)
+                    SimpleRoutineView(viewModel: viewModel, routine: routine, onComplete: nextRoutine)
                 case "duration":
-                    TimeRoutineView(routine: routine, onComplete: timeRoutineNextRoutine)
+                    TimeRoutineView(viewModel: viewModel, routine: routine, onComplete: timeRoutineNextRoutine)
                 case "numeric":
-                    NumericRoutineView(routine: routine, onComplete: nextRoutine)
+                    NumericRoutineView(viewModel: viewModel, routine: routine, onComplete: nextRoutine)
                 case "complex":
-                    ComplexRoutineView(alarmTime: alarmModel.alarmTime, routine: routine, onComplete: nextRoutine)
+                    ComplexRoutineView(viewModel: viewModel, alarmTime: alarmModel.alarmTime, routine: routine, onComplete: nextRoutine)
                 default: EmptyView()
                 }
                 
@@ -46,10 +51,19 @@ struct RoutineExecutionView: View {
                     RoutineControlButton(
                         imageName: "next",
                         isPrev: false,
-                        enable: currentIndex < (alarmModel.routineDetails?.count ?? 0) - 1,
+                        enable: true,
                         text: "건너뛰기"
                     ) {
-                        nextRoutine()
+                            let skippedRoutineID = routines[currentIndex].routine_id
+                            viewModel.failRoutine(skippedRoutineID)
+                            
+                            if currentIndex < routines.count - 1 {
+                                currentIndex += 1
+                            } else {
+                                viewModel.sendRoutinesStatus(execID: execID)
+                                dismiss()
+                                dismissAlarmScreen()
+                            }
                     }
                 }
             }
@@ -59,7 +73,11 @@ struct RoutineExecutionView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     Button(action: {
+                        viewModel.abortAllRoutines(force: true)
+                        viewModel.sendRoutinesStatus(execID: execID)
+                        
                         dismiss()
+                        dismissAlarmScreen()
                     }) {
                         HStack(spacing: 4) {
                             Image(systemName: "chevron.left")
@@ -69,22 +87,49 @@ struct RoutineExecutionView: View {
                     }
                 }
             }
+            .onAppear {
+                print("routines.count =", routines.count)
+                print("routines =", routines)
+                if viewModel.routineStatuses.isEmpty {
+                    viewModel.routineStatuses = routines.map {
+                        RoutineStatus(
+                            routine_id: $0.routine_id,
+                            completed: false,
+                            actual_value: nil,
+                            completed_ts: nil,
+                            abort_ts: nil
+                        )
+                    }
+                }
+            }
+        } else {
+            Text("루틴 없음: routines.count: \(routines.count)")
+                .foregroundColor(.red)
         }
     }
     
     private func nextRoutine() {
-        //if currentIndex < routineViewModel.routines.count - 1 {
-        if let routines = alarmModel.routineDetails {
             if currentIndex < routines.count - 1 {
                 currentIndex += 1
+            } else {
+                // 루틴이 끝났을 때의 처리
+                viewModel.sendRoutinesStatus(execID: execID)
+                dismiss()
+                dismissAlarmScreen()
             }
-            // 루틴이 끝났을 때의 처리
-        }
         
     }
     
     private func timeRoutineNextRoutine() {
-        
+        //if let routines = alarmModel.routineDetails {
+            if currentIndex < routines.count - 1 {
+                currentIndex += 1
+            } else {
+                viewModel.sendRoutinesStatus(execID: execID)
+                dismiss()
+                dismissAlarmScreen()
+            }
+        //}
     }
 }
 

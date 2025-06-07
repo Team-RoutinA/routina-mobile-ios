@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct AlarmScreenView: View {
+    @Binding var isPresented: Bool
+    @State private var execID: String?
     @State private var isPresentingExecutionView = false
     @StateObject var alarmViewModel = AlarmViewModel()
 
@@ -27,6 +29,10 @@ struct AlarmScreenView: View {
         formatter.locale = Locale(identifier: "ko_KR")
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: alarmViewModel.selectedSpecificAlarm?.alarmTime ?? Date())
+    }
+    
+    var isRoutineReady: Bool {
+        alarmViewModel.selectedSpecificAlarm?.routineDetails != nil
     }
     
     var body: some View {
@@ -50,15 +56,22 @@ struct AlarmScreenView: View {
                 
                 Spacer()
                 
-                MainButton(text: "알람 끄기") {
+                MainButton(text: "알람 끄기", enable: isRoutineReady) {
+                    print("Mainbutton tapped")
+                    print("###\n \(String(describing: alarmViewModel.selectedSpecificAlarm?.routineDetails ?? nil)) \n###")
                     if let alarmModel = alarmViewModel.selectedSpecificAlarm {
+                        print("alarmModel loaded")
                         alarmViewModel.startAlarm(model: alarmModel) { success, execId in
                             if success, let execId = execId {
-                                isPresentingExecutionView = true
+                                print("✅ execID 할당 시작")
+                                self.execID = execId
+                                
                             } else {
-                                print("###실패###")
+                                print("startAlarm 실패")
                             }
                         }
+                    } else {
+                        print("selectedSpecificAlarm이 nil입니다.")
                     }
                 }
             }
@@ -67,11 +80,28 @@ struct AlarmScreenView: View {
             alarmViewModel.fetchSpecificAlarm(id: alarmId)
         }
         .toolbar(.hidden)
+        .onChange(of: execID) {
+            if execID != nil {
+                print("🔔 execID 변경됨: \(String(describing: execID))")
+                isPresentingExecutionView = true
+            }
+        }
         .fullScreenCover(isPresented: $isPresentingExecutionView) {
-            if let alarm = alarmViewModel.selectedSpecificAlarm {
-                NavigationStack {
-                    if let routines = alarm.routineDetails {
-                        RoutineExecutionView(alarmModel: alarm, routines: routines)
+            NavigationStack {
+                if let alarm = alarmViewModel.selectedSpecificAlarm,
+                   let routines = alarm.routineDetails,
+                   let execID = execID {
+                    RoutineExecutionView(alarmModel: alarm, routines: routines, execID: execID, dismissAlarmScreen: { isPresented = false })
+                } else {
+                    VStack(spacing: 16) {
+                        Text("⛔️ 루틴 또는 execID 없음")
+                        Text("execID: \(execID ?? "nil")")
+                        Text("routines: \(alarmViewModel.selectedSpecificAlarm?.routineDetails?.count.description ?? "nil")")
+                    }
+                    .onAppear {
+                        print("⚠️ 루틴 또는 execID 없음")
+                        print("execID: \(String(describing: self.execID))")
+                        print("routines: \(String(describing: alarmViewModel.selectedSpecificAlarm?.routineDetails))")
                     }
                 }
             }

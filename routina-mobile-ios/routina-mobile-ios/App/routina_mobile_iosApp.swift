@@ -70,7 +70,7 @@ struct routina_mobile_iosApp: App {
                     }
                     .navigationDestination(isPresented: $moveToRoutine) {
                         if let alarmId = selectedAlarmId {
-                            AlarmScreenView(alarmId: alarmId)
+                            AlarmScreenView(isPresented: $moveToRoutine, alarmId: alarmId)
                         }
                     }
             }

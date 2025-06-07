@@ -10,6 +10,7 @@ import Moya
 
 enum ExecutionAPI {
     case startAlarm(request: StartAlarmRequest)
+    case executeRoutines(execID: String, request: RoutinesExecutionRequest)
 }
 
 extension ExecutionAPI: BaseAPI {
@@ -17,6 +18,8 @@ extension ExecutionAPI: BaseAPI {
         switch self {
         case .startAlarm:
             return "/alarm-executions"
+        case .executeRoutines(let execID, _):
+            return "/alarm-executions/\(execID)"
         }
     }
     
@@ -24,12 +27,16 @@ extension ExecutionAPI: BaseAPI {
         switch self {
         case .startAlarm:
             return .post
+        case .executeRoutines:
+            return .put
         }
     }
     
     var task: Task {
         switch self {
         case .startAlarm(let request):
+            return .requestJSONEncodable(request)
+        case .executeRoutines(_, let request):
             return .requestJSONEncodable(request)
         }
     }

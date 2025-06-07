@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ComplexRoutineView: View {
+    @ObservedObject var viewModel: RoutineViewModel
     let alarmTime: Date
     let routine: RoutineDetail
     let onComplete: () -> Void
@@ -45,7 +46,10 @@ struct ComplexRoutineView: View {
                 Text("\(endTimeString) 까지")
                     .font(.PretendardExtraBold40)
                 
-                RoutineProceedButton(text: "완료", enable: true, action: onComplete)
+                RoutineProceedButton(text: "완료", enable: true, action: {
+                    viewModel.completeRoutines(routine.routine_id)
+                    onComplete()
+                })
             }
         }
     }
