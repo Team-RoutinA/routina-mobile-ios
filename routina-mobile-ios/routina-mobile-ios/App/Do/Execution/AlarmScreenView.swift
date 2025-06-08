@@ -6,9 +6,12 @@
 //
 
 import SwiftUI
+import AVFoundation
 
 struct AlarmScreenView: View {
     @Binding var isPresented: Bool
+    @State private var audioPlayer: AVAudioPlayer?
+    @State private var vibrationTimer: Timer?
     @State private var execID: String?
     @State private var isPresentingExecutionView = false
     @StateObject var alarmViewModel = AlarmViewModel()
@@ -58,6 +61,8 @@ struct AlarmScreenView: View {
                 
                 MainButton(text: "알람 끄기", enable: isRoutineReady) {
                     print("Mainbutton tapped")
+                    audioPlayer?.stop()
+                    stopVibrationLoop()
                     print("###\n \(String(describing: alarmViewModel.selectedSpecificAlarm?.routineDetails ?? nil)) \n###")
                     if let alarmModel = alarmViewModel.selectedSpecificAlarm {
                         print("alarmModel loaded")
@@ -78,6 +83,12 @@ struct AlarmScreenView: View {
         }
         .onAppear {
             alarmViewModel.fetchSpecificAlarm(id: alarmId)
+        }
+        .onReceive(alarmViewModel.$selectedSpecificAlarm.compactMap { $0 }) { alarm in
+            if alarm.isVibrationOn {
+                startVibrationLoop()
+            }
+            playAlarmSound(volume: Float(alarm.volume))
         }
         .toolbar(.hidden)
         .onChange(of: execID) {
@@ -107,6 +118,34 @@ struct AlarmScreenView: View {
             }
         }
         
+    }
+    
+    private func playAlarmSound(volume: Float) {
+        guard let soundURL = Bundle.main.url(forResource: "alarm-ringtone", withExtension: "mp3") else {
+            print("❌ 사운드 파일을 찾을 수 없습니다.")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            audioPlayer?.volume = volume
+            audioPlayer?.numberOfLoops = -1
+            audioPlayer?.prepareToPlay()
+            audioPlayer?.play()
+        } catch {
+            print("❌ 사운드 재생 실패:", error.localizedDescription)
+        }
+    }
+    
+    private func startVibrationLoop() {
+        vibrationTimer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            AudioServicesPlaySystemSound(kSystemSoundID_Vibrate)
+        }
+    }
+    
+    private func stopVibrationLoop() {
+        vibrationTimer?.invalidate()
+        vibrationTimer = nil
     }
 }
 
