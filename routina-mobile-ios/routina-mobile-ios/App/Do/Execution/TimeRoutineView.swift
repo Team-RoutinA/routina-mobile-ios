@@ -56,7 +56,7 @@ struct TimeRoutineView: View {
             }
         }
         .onAppear {
-            remainingTime = (routine.goal_value ?? 1) * 60
+            remainingTime = routine.duration_seconds ?? 60
             timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
                 if isRunning && remainingTime > 0 {
                     remainingTime -= 1

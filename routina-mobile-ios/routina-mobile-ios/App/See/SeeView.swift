@@ -28,12 +28,12 @@ struct SeeView: View {
         }
         .onAppear {
             viewModel.fetchCalendarData()
-            viewModel.fetchWeeklyFeedbackProgress(userId: "test")
+            viewModel.fetchWeeklyFeedbackProgress()
         }
         .onChange(of: scenePhase) {
             if scenePhase == .active {
                 viewModel.fetchCalendarData()
-                viewModel.fetchWeeklyFeedbackProgress(userId: "test")
+                viewModel.fetchWeeklyFeedbackProgress()
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

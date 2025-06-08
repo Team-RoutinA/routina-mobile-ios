@@ -32,6 +32,7 @@ class LoginViewModel: ObservableObject {
                 
                 // UserDefaults에 저장
                 UserDefaults.standard.set(response.user_id, forKey: "userId")
+                UserDefaults.standard.set(response.name ?? "NoName", forKey: "name")
                 
                 // 🔍 제대로 저장되었는지 확인
                 let saved = UserDefaults.standard.string(forKey: "userId")

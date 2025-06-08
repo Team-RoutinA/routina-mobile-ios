@@ -14,12 +14,13 @@ struct DoView: View {
     @StateObject private var routineViewModel = RoutineViewModel()
     @State private var moveToRoutine = false
     @State private var selectedAlarmModel: AlarmModel? = nil
+    @State private var userName: String = "박상혁"
     
     var body: some View {
         NavigationStack {
                 VStack {
                     Spacer().frame(height: 36)
-                    WelcomeBox(name: "박상혁") {
+                    WelcomeBox(name: userName) {
                         selectedTab = 2
                     }
                     
@@ -36,6 +37,7 @@ struct DoView: View {
                 }
                 .background(.gray1)
                 .onAppear {
+                    userName = UserDefaults.standard.string(forKey: "name") ?? "NoName"
                     routineViewModel.fetchRoutines { routines in
                         alarmViewModel.updateRoutineMap(routines)
                         alarmViewModel.fetchAlarms()

@@ -16,16 +16,16 @@ class CalendarViewModel: ObservableObject {
     
     private let progressService = ProgressService()
     private var cancellables = Set<AnyCancellable>()
+    private let userId = UserDefaults.standard.string(forKey: "userId") ?? "test"
 
     // 생성 시 초기 데이터 로드
     init() {
         fetchCalendarData()
-        fetchWeeklyFeedbackProgress(userId: "test")
+        fetchWeeklyFeedbackProgress()
     }
 
     // 루틴 달성률 데이터
     func fetchCalendarData() {
-        let userId = "test"
         let components = Calendar.current.dateComponents([.year, .month], from: currentMonth)
         guard let year = components.year, let month = components.month else { return }
 
@@ -72,7 +72,7 @@ class CalendarViewModel: ObservableObject {
     }
     
     // 이번 주의 달성률 반환
-    func fetchWeeklyFeedbackProgress(userId: String) {
+    func fetchWeeklyFeedbackProgress() {
         let currentWeek = Calendar.current.component(.weekOfYear, from: Date())
         print("🧭 현재 주차: \(currentWeek)")
         
