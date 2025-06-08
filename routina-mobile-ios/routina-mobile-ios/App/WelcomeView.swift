@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Network
 
 struct WelcomeView: View {
     @Binding var isLoggedIn: Bool
@@ -52,12 +53,45 @@ struct WelcomeView: View {
             }
         }
         .onAppear {
+            triggerLocalNetworkAccess()
             characterOffset = 0
         }
         .fullScreenCover(isPresented: $showLogin) {
             LoginView(isLoggedIn: $isLoggedIn)
         }
     }
+    
+    func getLocalIPAddress() -> String? {
+        var address: String?
+        
+        var ifaddr: UnsafeMutablePointer<ifaddrs>?
+        guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else {
+            return nil
+        }
+        
+        for ptr in sequence(first: firstAddr, next: { $0.pointee.ifa_next }) {
+            let interface = ptr.pointee
+            
+            let addrFamily = interface.ifa_addr.pointee.sa_family
+            if addrFamily == UInt8(AF_INET), String(cString: interface.ifa_name) == "en0" {
+                var hostname = [CChar](repeating: 0, count: Int(NI_MAXHOST))
+                getnameinfo(interface.ifa_addr, socklen_t(interface.ifa_addr.pointee.sa_len),
+                            &hostname, socklen_t(hostname.count),
+                            nil, socklen_t(0), NI_NUMERICHOST)
+                address = String(cString: hostname)
+                break
+            }
+        }
+        freeifaddrs(ifaddr)
+        return address
+    }
+        
+    func triggerLocalNetworkAccess() {
+        let params = NWParameters.udp
+        let connection = NWConnection(host: "172.30.1.34", port: 8000, using: params)
+        connection.start(queue: .global())
+    }
+
 }
 
 //#Preview {
