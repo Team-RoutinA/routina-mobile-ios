@@ -13,6 +13,7 @@ struct routina_mobile_iosApp: App {
     
     @State private var moveToRoutine = false
     @State private var selectedAlarmId: String? = nil
+    @State private var isLoggedIn: Bool = UserDefaults.standard.string(forKey: "userId") != nil
     
     @Environment(\.scenePhase) private var scenePhase
     
@@ -22,36 +23,13 @@ struct routina_mobile_iosApp: App {
     
     var body: some Scene {
         WindowGroup {
-            NavigationStack {
-                RootView()
-                    .onAppear {
-                        print("APPEAR")
-                        if UserDefaults.standard.bool(forKey: "launchFromNotification") {
-                            let routineViewModel = RoutineViewModel()
-                            routineViewModel.fetchRoutines { routines in
-                                let alarmViewModel = AlarmViewModel()
-                                alarmViewModel.fetchAlarms()
-                                alarmViewModel.updateRoutineMap(routines)
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                                    selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
-                                    moveToRoutine = true
-                                }
-                            }
-                            UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
-                        }
-                    }
-                    .onReceive(NotificationCenter.default.publisher(for: .navigateToRoutine)) { _ in
-                        let alarmViewModel = AlarmViewModel()
-                        alarmViewModel.fetchAlarms()
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                            selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
-                            moveToRoutine = true
-                        }
-                    }
-                    .onChange(of: scenePhase) {
-                        print("NEW PHASE: \(scenePhase)")
-                        if scenePhase == .active {
+            if !isLoggedIn {
+                SplashView(isLoggedIn: $isLoggedIn)
+            } else {
+                NavigationStack {
+                    RootView()
+                        .onAppear {
+                            print("APPEAR")
                             if UserDefaults.standard.bool(forKey: "launchFromNotification") {
                                 let routineViewModel = RoutineViewModel()
                                 routineViewModel.fetchRoutines { routines in
@@ -67,12 +45,40 @@ struct routina_mobile_iosApp: App {
                                 UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
                             }
                         }
-                    }
-                    .navigationDestination(isPresented: $moveToRoutine) {
-                        if let alarmId = selectedAlarmId {
-                            AlarmScreenView(isPresented: $moveToRoutine, alarmId: alarmId)
+                        .onReceive(NotificationCenter.default.publisher(for: .navigateToRoutine)) { _ in
+                            let alarmViewModel = AlarmViewModel()
+                            alarmViewModel.fetchAlarms()
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
+                                moveToRoutine = true
+                            }
                         }
-                    }
+                        .onChange(of: scenePhase) {
+                            print("NEW PHASE: \(scenePhase)")
+                            if scenePhase == .active {
+                                if UserDefaults.standard.bool(forKey: "launchFromNotification") {
+                                    let routineViewModel = RoutineViewModel()
+                                    routineViewModel.fetchRoutines { routines in
+                                        let alarmViewModel = AlarmViewModel()
+                                        alarmViewModel.fetchAlarms()
+                                        alarmViewModel.updateRoutineMap(routines)
+                                        
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
+                                            selectedAlarmId = UserDefaults.standard.string(forKey: "launchedAlarmId")
+                                            moveToRoutine = true
+                                        }
+                                    }
+                                    UserDefaults.standard.set(false, forKey: "launchFromNotification") // 재사용 대비 초기화
+                                }
+                            }
+                        }
+                        .navigationDestination(isPresented: $moveToRoutine) {
+                            if let alarmId = selectedAlarmId {
+                                AlarmScreenView(isPresented: $moveToRoutine, alarmId: alarmId)
+                            }
+                        }
+                }
+
             }
         }
     }

@@ -59,4 +59,24 @@ extension Font {
     static var PretendardExtraBold40: Font {
         return .pretend(type: .extraBold, size: 40)
     }
+    
+    static var PretendardBold40: Font {
+        return .pretend(type: .bold, size: 40)
+    }
+    
+    static var PretendardMedium40: Font {
+        return .pretend(type: .medium, size: 40)
+    }
+
+    static var PretendardMedium20: Font {
+        return .pretend(type: .medium, size: 20)
+    }
+
+    static var PretendardMedium14: Font {
+        return .pretend(type: .medium, size: 14)
+    }
+    
+    static var PretendardBold36: Font {
+        return .pretend(type: .bold, size: 36)
+    }
 }
